@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://tile001"]
+
+[ext_resource type="Script" path="res://scripts/tile.gd" id="1_tile01"]
+
+[node name="Tile" type="Node2D"]
+script = ExtResource("1_tile01")
+
+[node name="TileSprite" type="Sprite2D" parent="."]
+
+[node name="Highlight" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0)

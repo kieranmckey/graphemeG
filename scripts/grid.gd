@@ -153,7 +153,7 @@ func highlight_tile(world_pos: Vector2, grapheme: Grapheme) -> void:
 
 ## Auto-rotate + highlight — called while dragging inside the grid.
 ## Mirrors rotateGraphemeInGrid:withTarget:withGrapheme: in AMGGrid.m
-func rotate_grapheme_in_grid(delta: Vector2, target_pos: Vector2, grapheme: Grapheme) -> void:
+func rotate_grapheme_in_grid(_delta: Vector2, target_pos: Vector2, grapheme: Grapheme) -> void:
     var anchor = nearest_tile(target_pos)
     if anchor:
         match anchor.tile_type:
@@ -209,8 +209,8 @@ func _candidate_tiles(world_pos: Vector2, grapheme: Grapheme) -> Array:
 
     var result: Array = []
     for i in range(grapheme.length):
-        var r := anchor.row
-        var c := anchor.col
+        var r: int = anchor.row
+        var c: int = anchor.col
         if grapheme.grapheme_dir == Constants.GraphemeDirection.HORIZONTAL_RIGHT:
             c += i
         else:

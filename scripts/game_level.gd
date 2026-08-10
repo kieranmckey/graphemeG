@@ -27,7 +27,6 @@ var _is_swiping: bool = false              # touch not yet claimed by a grapheme
 @onready var _hud:          HUD             = $HUD
 @onready var _timer_bar:    TimerBar        = $TimerBar
 @onready var _sliders_root: Node2D          = $SlidersRoot
-@onready var _background:   Sprite2D        = $Background
 
 # ── Lifecycle ─────────────────────────────────────────────────────────────────
 
@@ -35,15 +34,10 @@ func _ready() -> void:
     _start_level()
 
 func _start_level() -> void:
-    _load_background()
     _build_grid()
     _connect_hud()
     _add_grapheme_sliders()
     _setup_timer()
-
-func _load_background() -> void:
-    if _background and ResourceLoader.exists(Constants.BACKGROUND_PATH):
-        _background.texture = load(Constants.BACKGROUND_PATH)
 
 func _build_grid() -> void:
     _grid.build(GRID_ORIGIN)
@@ -94,20 +88,9 @@ func _input(event: InputEvent) -> void:
 
     if event is InputEventScreenTouch:
         _handle_touch(event as InputEventScreenTouch)
-    elif event is InputEventMouseButton:
-        var mb := event as InputEventMouseButton
-        if mb.button_index == MOUSE_BUTTON_LEFT:
-            var fake := InputEventScreenTouch.new()
-            fake.position = mb.position
-            fake.pressed  = mb.pressed
-            _handle_touch(fake)
     elif event is InputEventScreenDrag:
         _handle_drag((event as InputEventScreenDrag).position,
                      (event as InputEventScreenDrag).relative)
-    elif event is InputEventMouseMotion:
-        if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-            _handle_drag((event as InputEventMouseMotion).position,
-                         (event as InputEventMouseMotion).relative)
 
 func _handle_touch(event: InputEventScreenTouch) -> void:
     if event.pressed:
@@ -165,19 +148,20 @@ func _begin_drag(g: Grapheme, pos: Vector2) -> void:
     g.pre_move_position = g.global_position
     g.set_selected(true)
 
-    # Detach from slider page so it renders above everything
-    var slider: GraphemeSlider = _grapheme_sliders[g.grapheme_type]
-    slider.detach_grapheme(g)
+    # Always reparent to scene root for top-level rendering during drag
+    if g.get_parent():
+        g.get_parent().remove_child(g)
     add_child(g)
 
-    # If it was on the grid, un-place it
+    var slider: GraphemeSlider = _grapheme_sliders[g.grapheme_type]
+    slider._placed_graphemes.erase(g)
+
     if g.is_placed:
         _grid.remove_from_grid(g)
 
-    # Lift to finger position
     g.global_position = pos
 
-func _end_drag(pos: Vector2) -> void:
+func _end_drag(_pos: Vector2) -> void:
     var g := _selected_grapheme
     _selected_grapheme = null
 
@@ -218,7 +202,7 @@ func _try_swipe(end_pos: Vector2) -> void:
     var direction := 1 if dx < 0 else -1   # swipe left → forward, swipe right → back
     # Find which slider was swiped (by vertical position)
     for slider in _grapheme_sliders:
-        var slider_y := slider.global_position.y
+        var slider_y: float = slider.global_position.y
         if abs(_touch_start.y - slider_y) < Constants.WORLD_TILE_SIZE * 2:
             slider.slide(direction)
             return

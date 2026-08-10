@@ -26,6 +26,35 @@ func _ready() -> void:
     _next_btn.pressed.connect(func(): next_level_pressed.emit())
     _redo_btn.pressed.connect(func(): redo_level_pressed.emit())
     _quit_btn.pressed.connect(func(): quit_pressed.emit())
+    _apply_kenney_theme()
+
+func _apply_kenney_theme() -> void:
+    var font: FontFile = load(Constants.FONT_PATH) as FontFile
+    if not font:
+        return
+    var btn_tex: Texture2D = load(Constants.UI_BUTTON_PATH)
+    var btn_style := StyleBoxTexture.new()
+    if btn_tex:
+        btn_style.texture = btn_tex
+        btn_style.texture_margin_left   = 12
+        btn_style.texture_margin_right  = 12
+        btn_style.texture_margin_top    = 10
+        btn_style.texture_margin_bottom = 10
+    for node in _collect_nodes(self):
+        if node is Label:
+            node.add_theme_font_override("font", font)
+        elif node is Button:
+            node.add_theme_font_override("font", font)
+            if btn_tex:
+                node.add_theme_stylebox_override("normal", btn_style)
+                node.add_theme_stylebox_override("hover",  btn_style)
+                node.add_theme_stylebox_override("pressed", btn_style)
+
+func _collect_nodes(root: Node) -> Array:
+    var result := [root]
+    for child in root.get_children():
+        result.append_array(_collect_nodes(child))
+    return result
 
 # ── Score ─────────────────────────────────────────────────────────────────────
 

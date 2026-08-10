@@ -47,9 +47,9 @@ func show_graphemes(max_grapheme_length: int) -> void:
 # ── Page management ───────────────────────────────────────────────────────────
 
 func _add_to_page(g: Grapheme) -> void:
-    var g_width := g.length * (Constants.LETTER_TILE_SIZE + Constants.LETTER_OFFSET * 2)
+    var g_width: float = g.length * Constants.WORLD_TILE_SIZE
 
-    if _pages.is_empty() or _page_cursor_x + g_width > x_limit + Constants.LETTER_TILE_SIZE:
+    if _pages.is_empty() or _page_cursor_x + g_width > x_limit + Constants.WORLD_TILE_SIZE:
         _new_page()
 
     var page := _pages[-1]
@@ -63,7 +63,7 @@ func _new_page() -> void:
     page.modulate.a = 0.0
     add_child(page)
     _pages.append(page)
-    _page_cursor_x = Constants.LETTER_TILE_SIZE / 2.0
+    _page_cursor_x = Constants.WORLD_TILE_SIZE / 2.0
 
 func slide(direction: int) -> void:
     # direction: +1 = forward (swipe left), -1 = back (swipe right)
@@ -135,6 +135,6 @@ func _redraw_dots() -> void:
         var dot := ColorRect.new()
         dot.size    = Vector2(8.0, 8.0)
         dot.position = Vector2(start_x + i * spacer - 4.0,
-                                -Constants.LETTER_TILE_SIZE * 0.5 - spacer * 0.25)
+                                -Constants.WORLD_TILE_SIZE * 0.5 - spacer * 0.25)
         dot.color = Color.LIGHT_GRAY if i == _current_page else Color.DARK_GRAY
         _dots_root.add_child(dot)

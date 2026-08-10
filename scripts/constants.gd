@@ -9,9 +9,8 @@ const MAX_LEVELS: int = 10
 const BORDER_SIZE: float = 25.0
 const LEVEL_MAP_SIZE: int = 7
 const WORLD_TILE_SIZE: float = 80.0
-const LETTER_TILE_SIZE: float = 72.0
-const LETTER_OFFSET: float = WORLD_TILE_SIZE * 0.1        # 8.0
 const MAP_SIZE: float = LEVEL_MAP_SIZE * WORLD_TILE_SIZE  # 560.0
+const LETTER_SCALE: float = WORLD_TILE_SIZE / 64.0        # 64px source → 80px logical
 const PLAY_AREA_Y: float = 0.35  # fraction of viewport height where sliders begin (from bottom)
 const START_LIVES: int = 3
 const START_TIMER_SECONDS: int = 150  # 2 min 30 sec
@@ -20,10 +19,9 @@ const DISABLED_FADE_DURATION: float = 3.0
 const SWIPE_MIN_DISTANCE: float = 40.0  # pixels required to trigger a page swipe
 
 # --- Asset paths ---
-const TILE_ATLAS_DIR: String = "res://assets/tiles/"
-const LETTERS_BIG_PATH: String = "res://assets/letters_big.png"
-const LETTERS_UI_PATH: String = "res://assets/letters_ui.png"
-const BACKGROUND_PATH: String = "res://assets/background.png"
+const LETTERS_DIR: String = "res://assets/letters/"
+const FONT_PATH: String = "res://assets/fonts/Kenney Future.ttf"
+const UI_BUTTON_PATH: String = "res://assets/ui/button_rectangle_flat.png"
 const WORDS_LIST_PATH: String = "res://data/words7.txt"
 const GRAPHEME_FREQ_PATH: String = "res://data/grapheme_frequencies.json"
 const TILE_MAPS_PATH: String = "res://data/tile_maps.json"

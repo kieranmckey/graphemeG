@@ -8,12 +8,16 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="GraphemeX"
 config/description="A word-building puzzle game"
-run/main_scene="res://scenes/main_menu.tscn"
-config/features=PackedStringArray("4.3", "Mobile")
+run/main_scene="res://scenes/game_level.tscn"
+config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -25,10 +29,12 @@ Leveller="*res://scripts/leveller.gd"
 
 window/size/viewport_width=1080
 window/size/viewport_height=1920
+window/size/resizable=false
+window/size/window_width_override=450
+window/size/window_height_override=800
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation="portrait"
-window/size/resizable=false
 
 [input_devices]
 

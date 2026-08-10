@@ -4,9 +4,6 @@
 class_name Grapheme
 extends Node2D
 
-signal placed_on_grid(grapheme: Grapheme)
-signal returned_to_slider(grapheme: Grapheme)
-
 # ── Data ──────────────────────────────────────────────────────────────────────
 
 var grapheme_type: Constants.GraphemeType = Constants.GraphemeType.VOWEL
@@ -35,7 +32,12 @@ func setup(morpheme_text: String, type: Constants.GraphemeType, ai: GraphemeAI) 
     length        = text.length()
     grapheme_type = type
     score         = ai.get_morpheme_score(text)
-    _build_visuals()
+    # Visuals are built in _ready() once @onready vars are available
+    pass
+
+func _ready() -> void:
+    if not text.is_empty():
+        _build_visuals()
 
 func _build_visuals() -> void:
     if not _letters_root:
@@ -43,41 +45,21 @@ func _build_visuals() -> void:
     for child in _letters_root.get_children():
         child.queue_free()
 
-    var base_tex: Texture2D = null
-    if ResourceLoader.exists(Constants.LETTERS_BIG_PATH):
-        base_tex = load(Constants.LETTERS_BIG_PATH)
-
     for i in range(length):
-        var ch := text[i].to_upper()
-        var ascii_idx := ch.unicode_at(0) - 65   # 'A'=0 … 'Z'=25
+        var ch := text[i].to_lower()
+        var path := Constants.LETTERS_DIR + ch + ".png"
+        var sprite := Sprite2D.new()
+        if ResourceLoader.exists(path):
+            sprite.texture = load(path)
+        sprite.scale = Vector2(Constants.LETTER_SCALE, Constants.LETTER_SCALE)
+        sprite.position = Vector2(i * Constants.WORLD_TILE_SIZE, 0.0)
+        _letters_root.add_child(sprite)
 
-        # Tile background sprite
-        var tile_bg := Sprite2D.new()
-        var bg_path := Constants.TILE_ATLAS_DIR + "tile_gray.png"
-        if ResourceLoader.exists(bg_path):
-            tile_bg.texture = load(bg_path)
-        tile_bg.position = Vector2(
-            i * (Constants.LETTER_TILE_SIZE + Constants.LETTER_OFFSET), 0.0)
-        _letters_root.add_child(tile_bg)
-
-        # Letter overlay
-        if base_tex:
-            var atlas_tex := AtlasTexture.new()
-            atlas_tex.atlas = base_tex
-            atlas_tex.region = Rect2(
-                Constants.LETTER_TILE_SIZE * ascii_idx, 0.0,
-                Constants.LETTER_TILE_SIZE, Constants.LETTER_TILE_SIZE)
-            var letter_sprite := Sprite2D.new()
-            letter_sprite.texture = atlas_tex
-            tile_bg.add_child(letter_sprite)
-
-    # Score label
     if _score_label:
         _score_label.text = str(score)
         _score_label.position = Vector2(
-            length * (Constants.LETTER_TILE_SIZE + Constants.LETTER_OFFSET)
-                - Constants.LETTER_TILE_SIZE,
-            -(Constants.LETTER_TILE_SIZE * 0.5))
+            length * Constants.WORLD_TILE_SIZE - Constants.WORLD_TILE_SIZE,
+            -(Constants.WORLD_TILE_SIZE * 0.5))
 
 # ── Direction / Rotation ──────────────────────────────────────────────────────
 
@@ -98,15 +80,15 @@ func _apply_rotation() -> void:
 
 ## Axis-aligned bounding rect (local space) for overlap tests.
 func get_bounding_rect() -> Rect2:
-    var hw := Constants.LETTER_TILE_SIZE / 2.0
+    var hw := Constants.WORLD_TILE_SIZE / 2.0
     if grapheme_dir == Constants.GraphemeDirection.HORIZONTAL_RIGHT:
         return Rect2(-hw, -hw,
-            length * (Constants.LETTER_TILE_SIZE + Constants.LETTER_OFFSET),
-            Constants.LETTER_TILE_SIZE)
+            length * Constants.WORLD_TILE_SIZE,
+            Constants.WORLD_TILE_SIZE)
     else:
         return Rect2(-hw, -hw,
-            Constants.LETTER_TILE_SIZE,
-            length * (Constants.LETTER_TILE_SIZE + Constants.LETTER_OFFSET))
+            Constants.WORLD_TILE_SIZE,
+            length * Constants.WORLD_TILE_SIZE)
 
 # ── Selection ─────────────────────────────────────────────────────────────────
 

@@ -43,9 +43,9 @@ func get_random_morpheme(type: Constants.GraphemeType, max_length: int) -> Strin
 
     if type == Constants.GraphemeType.VOWEL:
         # Pick a vowel not yet used this round
-        var attempts := 0
-        while grapheme.is_empty() and _vowels_found < VOWELS.size() and attempts < 20:
-            attempts += 1
+        var vowel_attempts := 0
+        while grapheme.is_empty() and _vowels_found < VOWELS.size() and vowel_attempts < 20:
+            vowel_attempts += 1
             var candidate: String = VOWELS[randi() % VOWELS.size()]
             if not _words_used.has(candidate):
                 grapheme = candidate

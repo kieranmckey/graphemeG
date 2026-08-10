@@ -27,15 +27,15 @@ var _bonus_applied: bool = false
 
 @onready var _sprite: Sprite2D = $TileSprite
 
-# Texture names per state — copied from the original Tiles.atlas filenames
+# Blank orb texture per state
 const _TEXTURE_MAP := {
-    Constants.TileState.IDLE:             "tile_0002.png",
-    Constants.TileState.SELECTED:         "tile_white.png",
-    Constants.TileState.FILLED:           "tile_filled.png",
-    Constants.TileState.VALIDATED:        "tile_validated.png",
-    Constants.TileState.INVALID:          "tile_invalid.png",
-    Constants.TileState.DISABLED:         "tile_disabled.png",
-    Constants.TileState.INVALID_DISABLED: "tile_invalid_disabled.png",
+    Constants.TileState.IDLE:             "Blank01.png",
+    Constants.TileState.SELECTED:         "Blank02.png",
+    Constants.TileState.FILLED:           "Blank03.png",
+    Constants.TileState.VALIDATED:        "Blank04.png",
+    Constants.TileState.INVALID:          "Blank05.png",
+    Constants.TileState.DISABLED:         "Blank06.png",
+    Constants.TileState.INVALID_DISABLED: "Blank06.png",
 }
 
 func _ready() -> void:
@@ -65,10 +65,11 @@ func _apply_visual_state() -> void:
 func _update_texture() -> void:
     if not _sprite:
         return
-    var name: String = _TEXTURE_MAP.get(tile_state, "tile_0002.png")
-    var path := Constants.TILE_ATLAS_DIR + name
+    var tex_name: String = _TEXTURE_MAP.get(tile_state, "Blank01.png")
+    var path := Constants.LETTERS_DIR + tex_name
     if ResourceLoader.exists(path):
         _sprite.texture = load(path)
+        _sprite.scale = Vector2(Constants.LETTER_SCALE, Constants.LETTER_SCALE)
 
 func _update_alpha() -> void:
     match tile_state:

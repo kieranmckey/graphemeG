@@ -4,7 +4,6 @@ extends Node2D
 
 @onready var _play_btn:     Button = $UI/PlayButton
 @onready var _hi_score_lbl: Label  = $UI/HiScoreLabel
-@onready var _title_lbl:    Label  = $UI/TitleLabel
 
 func _ready() -> void:
     _hi_score_lbl.text = "Best score: %d" % GameStats.high_score

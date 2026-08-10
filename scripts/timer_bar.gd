@@ -40,6 +40,6 @@ func _refresh() -> void:
         _bar.value     = ratio * 100.0
         _bar.modulate  = Color.RED if _remaining < 30.0 else Color.WHITE
     if _label:
-        var mins := int(_remaining) / 60
-        var secs := int(_remaining) % 60
+        var mins: int = int(_remaining / 60.0)
+        var secs: int = int(fmod(_remaining, 60.0))
         _label.text = "%d:%02d" % [mins, secs]

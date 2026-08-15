@@ -27,15 +27,14 @@ var _bonus_applied: bool = false
 
 @onready var _sprite: Sprite2D = $TileSprite
 
-# Blank orb texture per state
 const _TEXTURE_MAP := {
-    Constants.TileState.IDLE:             "Blank01.png",
-    Constants.TileState.SELECTED:         "Blank02.png",
-    Constants.TileState.FILLED:           "Blank03.png",
-    Constants.TileState.VALIDATED:        "Blank04.png",
-    Constants.TileState.INVALID:          "Blank05.png",
-    Constants.TileState.DISABLED:         "Blank06.png",
-    Constants.TileState.INVALID_DISABLED: "Blank06.png",
+    Constants.TileState.IDLE:             "grid_idle.png",
+    Constants.TileState.SELECTED:         "grid_selected.png",
+    Constants.TileState.FILLED:           "grid_filled.png",
+    Constants.TileState.VALIDATED:        "grid_validated.png",
+    Constants.TileState.INVALID:          "grid_invalid.png",
+    Constants.TileState.DISABLED:         "grid_idle.png",
+    Constants.TileState.INVALID_DISABLED: "grid_invalid.png",
 }
 
 func _ready() -> void:
@@ -65,8 +64,8 @@ func _apply_visual_state() -> void:
 func _update_texture() -> void:
     if not _sprite:
         return
-    var tex_name: String = _TEXTURE_MAP.get(tile_state, "Blank01.png")
-    var path := Constants.LETTERS_DIR + tex_name
+    var tex_name: String = _TEXTURE_MAP.get(tile_state, "grid_idle.png")
+    var path := Constants.GRID_TILES_DIR + tex_name
     if ResourceLoader.exists(path):
         _sprite.texture = load(path)
         _sprite.scale = Vector2(Constants.LETTER_SCALE, Constants.LETTER_SCALE)

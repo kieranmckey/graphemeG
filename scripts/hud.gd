@@ -43,8 +43,11 @@ func _apply_kenney_theme() -> void:
     for node in _collect_nodes(self):
         if node is Label:
             node.add_theme_font_override("font", font)
+            if not node.has_theme_font_size_override("font_size"):
+                node.add_theme_font_size_override("font_size", Constants.UI_FONT_SIZE)
         elif node is Button:
             node.add_theme_font_override("font", font)
+            node.add_theme_font_size_override("font_size", Constants.UI_FONT_SIZE)
             if btn_tex:
                 node.add_theme_stylebox_override("normal", btn_style)
                 node.add_theme_stylebox_override("hover",  btn_style)
@@ -73,6 +76,7 @@ func update_lives(lives: int) -> void:
         var lbl := Label.new()
         lbl.text = "♥"
         lbl.add_theme_color_override("font_color", Color.RED)
+        lbl.add_theme_font_size_override("font_size", 72)
         _lives_row.add_child(lbl)
 
 # ── Progress label (words / tiles) ───────────────────────────────────────────

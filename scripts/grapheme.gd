@@ -45,21 +45,28 @@ func _build_visuals() -> void:
     for child in _letters_root.get_children():
         child.queue_free()
 
+    var tile_tex: Texture2D = _tile_texture_for_type(grapheme_type)
+    var font: Font = load(Constants.FONT_PATH)
+
     for i in range(length):
-        var ch := text[i].to_lower()
-        var path := Constants.LETTERS_DIR + ch + ".png"
-        var sprite := Sprite2D.new()
-        if ResourceLoader.exists(path):
-            sprite.texture = load(path)
-        sprite.scale = Vector2(Constants.LETTER_SCALE, Constants.LETTER_SCALE)
-        sprite.position = Vector2(i * Constants.WORLD_TILE_SIZE, 0.0)
-        _letters_root.add_child(sprite)
+        var cell := LetterCell.new()
+        cell.position = Vector2(i * Constants.WORLD_TILE_SIZE, 0.0)
+        cell.setup(text[i].to_upper(), tile_tex, font, Constants.GRAPHEME_TILE_FONT_SIZE)
+        _letters_root.add_child(cell)
 
     if _score_label:
         _score_label.text = str(score)
         _score_label.position = Vector2(
             length * Constants.WORLD_TILE_SIZE - Constants.WORLD_TILE_SIZE,
             -(Constants.WORLD_TILE_SIZE * 0.5))
+
+func _tile_texture_for_type(t: Constants.GraphemeType) -> Texture2D:
+    var name: String
+    match t:
+        Constants.GraphemeType.VOWEL:     name = "tile_vowel.png"
+        Constants.GraphemeType.CONSONANT: name = "tile_consonant.png"
+        _:                                name = "tile_morpheme.png"
+    return load(Constants.GRAPHEME_TILES_DIR + name)
 
 # ── Direction / Rotation ──────────────────────────────────────────────────────
 

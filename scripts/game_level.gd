@@ -4,11 +4,8 @@
 ## Scene: res://scenes/game_level.tscn
 extends Node2D
 
-# Grid origin: top-left tile centre, matching the SpriteKit layout
-# (SpriteKit Y-up → Godot Y-down: grid anchor moves from top-right to top-left)
-const GRID_ORIGIN := Vector2(
-    Constants.BORDER_SIZE + Constants.WORLD_TILE_SIZE * 0.5,
-    Constants.BORDER_SIZE + Constants.WORLD_TILE_SIZE * 0.5)
+# Grid origin computed at runtime to centre the grid horizontally
+var _grid_origin: Vector2
 
 # ── State ─────────────────────────────────────────────────────────────────────
 
@@ -31,6 +28,10 @@ var _is_swiping: bool = false              # touch not yet claimed by a grapheme
 # ── Lifecycle ─────────────────────────────────────────────────────────────────
 
 func _ready() -> void:
+    var vp_w := get_viewport_rect().size.x
+    _grid_origin = Vector2(
+        (vp_w - Constants.MAP_SIZE) * 0.5 + Constants.WORLD_TILE_SIZE * 0.5,
+        Constants.BORDER_SIZE + Constants.WORLD_TILE_SIZE * 0.5)
     _start_level()
 
 func _start_level() -> void:
@@ -40,7 +41,7 @@ func _start_level() -> void:
     _setup_timer()
 
 func _build_grid() -> void:
-    _grid.build(GRID_ORIGIN)
+    _grid.build(_grid_origin)
 
 func _connect_hud() -> void:
     _hud.update_lives(_lives_left)

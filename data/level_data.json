@@ -1,9 +1,9 @@
 ﻿{
   "levels": [
-    { "level": 0, "grid_shape": "digit_1", "allowed_piece_ids": ["dot","domino","tromino_I"] },
+    { "level": 0, "grid_shape": "digit_4", "allowed_piece_ids": ["dot","tromino_I", "cross"] },
     { "level": 1, "grid_shape": "digit_2", "allowed_piece_ids": ["dot","domino","tromino_I","tromino_L"] },
     { "level": 2, "grid_shape": "digit_3", "allowed_piece_ids": ["dot","domino","tromino_I","tromino_L","tetromino_I"] },
-    { "level": 3, "grid_shape": "shape_L",    "allowed_piece_ids": [] },
+    { "level": 3, "grid_shape": "digit_1", "allowed_piece_ids": ["dot","domino","tromino_I","tromino_L","tetromino_I"] }, 
     { "level": 4, "grid_shape": "shape_plus", "allowed_piece_ids": [] },
     { "level": 5, "grid_shape": "digit_1", "allowed_piece_ids": [] },
     { "level": 6, "grid_shape": "digit_2", "allowed_piece_ids": [] },

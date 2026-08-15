@@ -24,24 +24,27 @@ func initialize(pos: Vector2, viewport_width: float) -> void:
 
 func load_pieces(pieces: Array) -> void:
 	_pieces = pieces.duplicate()
-	var x_cursor := PIECE_PADDING
+	var x := PIECE_PADDING
+	var y := 0.0
+	var row_h := 0.0
 
 	for piece in pieces:
 		var rect: Rect2 = piece.get_bounding_rect()
-		# Align left edge at x_cursor, centre vertically
-		var slot := Vector2(
-			x_cursor - rect.position.x,
-			-(rect.position.y + rect.size.y * 0.5))
+		# Wrap to next row when piece doesn't fit remaining width
+		if x > PIECE_PADDING and x + rect.size.x + PIECE_PADDING > _viewport_width:
+			y += row_h + PIECE_PADDING
+			x = PIECE_PADDING
+			row_h = 0.0
+		var slot := Vector2(x - rect.position.x, y - rect.position.y)
 		_piece_slots[piece] = slot
-		x_cursor += rect.size.x + PIECE_PADDING
-
-		# Reparent from scene root into container
+		x += rect.size.x + PIECE_PADDING
+		row_h = max(row_h, rect.size.y)
 		if piece.get_parent():
 			piece.get_parent().remove_child(piece)
 		_container.add_child(piece)
 		piece.position = slot
 
-	_total_width = x_cursor
+	_total_width = x
 
 # ── Public API ────────────────────────────────────────────────────────────────
 
@@ -69,9 +72,5 @@ func all_placed() -> bool:
 
 # ── Scroll ────────────────────────────────────────────────────────────────────
 
-func scroll_by(delta_x: float) -> void:
-	_scroll_offset = clamp(
-		_scroll_offset - delta_x,
-		0.0,
-		max(0.0, _total_width - _viewport_width))
-	_container.position.x = -_scroll_offset
+func scroll_by(_delta_x: float) -> void:
+	pass  # Wrap layout — no horizontal scrolling

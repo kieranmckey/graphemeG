@@ -78,6 +78,7 @@ func _start_level() -> void:
 	_tray_root.add_child(_piece_tray)
 	var tray_y := origin.y + g_rows * Constants.WORLD_TILE_SIZE + Constants.BORDER_SIZE * 2.0
 	_piece_tray.initialize(Vector2(0.0, tray_y), vp.x)
+	pieces.shuffle()
 	_piece_tray.load_pieces(pieces)
 
 # -- Input -----------------------------------------------------------------

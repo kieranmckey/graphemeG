@@ -1,39 +1,14 @@
-{
-  "graphemes_per_level": [
-    [5, 5, 3],
-    [5, 6, 3],
-    [7, 7, 4],
-    [7, 8, 4],
-    [7, 9, 4],
-    [7, 10, 5],
-    [7, 10, 5],
-    [7, 11, 5],
-    [8, 12, 5],
-    [8, 12, 5]
-  ],
-  "max_same_grapheme_per_level": [
-    [1, 1, 1],
-    [1, 1, 1],
-    [2, 1, 1],
-    [2, 1, 1],
-    [2, 1, 1],
-    [2, 1, 1],
-    [2, 1, 1],
-    [2, 2, 1],
-    [2, 2, 1],
-    [2, 2, 1]
-  ],
-  "level_complete_criteria": [
-    [2, 10, 5],
-    [3, 20, 7],
-    [3, 20, 8],
-    [3, 20, 10],
-    [3, 20, 9],
-    [3, 20, 10],
-    [3, 20, 12],
-    [4, 40, 15],
-    [3, 50, 14],
-    [2, 20, 13]
-  ],
-  "tile_maps": ["map1","map2","map3","map4","map5","map6","map7","map8","map9","map10"]
+﻿{
+  "levels": [
+    { "level": 0, "grid_shape": "digit_1", "allowed_piece_ids": ["dot","domino","tromino_I"] },
+    { "level": 1, "grid_shape": "digit_2", "allowed_piece_ids": ["dot","domino","tromino_I","tromino_L"] },
+    { "level": 2, "grid_shape": "digit_3", "allowed_piece_ids": ["dot","domino","tromino_I","tromino_L","tetromino_I"] },
+    { "level": 3, "grid_shape": "shape_L",    "allowed_piece_ids": [] },
+    { "level": 4, "grid_shape": "shape_plus", "allowed_piece_ids": [] },
+    { "level": 5, "grid_shape": "digit_1", "allowed_piece_ids": [] },
+    { "level": 6, "grid_shape": "digit_2", "allowed_piece_ids": [] },
+    { "level": 7, "grid_shape": "digit_3", "allowed_piece_ids": [] },
+    { "level": 8, "grid_shape": "shape_L",    "allowed_piece_ids": [] },
+    { "level": 9, "grid_shape": "shape_plus", "allowed_piece_ids": [] }
+  ]
 }

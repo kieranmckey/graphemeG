@@ -1,0 +1,97 @@
+{
+  "digit_1": [
+    { "id": 1, "fill": [["c"],["a"],["s"],["t"],["l"],["e"]] },
+    { "id": 2, "fill": [["s"],["i"],["m"],["p"],["l"],["e"]] },
+    { "id": 3, "fill": [["s"],["i"],["n"],["g"],["l"],["e"]] },
+    { "id": 4, "fill": [["b"],["o"],["t"],["t"],["l"],["e"]] },
+    { "id": 5, "fill": [["h"],["a"],["n"],["d"],["l"],["e"]] }
+  ],
+  "digit_2": [
+    {
+      "id": 1,
+      "fill": [
+        ["e","r","a"],
+        [null,null,"c"],
+        ["e","v","e"],
+        ["a",null,null],
+        ["r","y","e"]
+      ]
+    },
+    {
+      "id": 2,
+      "fill": [
+        ["g","a","s"],
+        [null,null,"a"],
+        ["t","a","t"],
+        ["o",null,null],
+        ["p","o","t"]
+      ]
+    }
+  ],
+  "digit_3": [
+    {
+      "id": 1,
+      "fill": [
+        ["b","u","s"],
+        [null,null,"p"],
+        ["e","g","o"],
+        [null,null,"r"],
+        ["b","a","t"]
+      ]
+    },
+    {
+      "id": 2,
+      "fill": [
+        ["h","i","s"],
+        [null,null,"t"],
+        ["e","r","a"],
+        [null,null,"l"],
+        ["a","c","e"]
+      ]
+    }
+  ],
+  "shape_L": [
+    {
+      "id": 1,
+      "fill": [
+        ["t",null,null],
+        ["r",null,null],
+        ["i",null,null],
+        ["c",null,null],
+        ["k","i","t"]
+      ]
+    },
+    {
+      "id": 2,
+      "fill": [
+        ["b",null,null],
+        ["l",null,null],
+        ["a",null,null],
+        ["s",null,null],
+        ["t","o","e"]
+      ]
+    }
+  ],
+  "shape_plus": [
+    {
+      "id": 1,
+      "fill": [
+        [null,"s",null],
+        ["a","p","t"],
+        [null,"a",null],
+        ["a","r","c"],
+        [null,"e",null]
+      ]
+    },
+    {
+      "id": 2,
+      "fill": [
+        [null,"s",null],
+        ["a","t","e"],
+        [null,"e",null],
+        ["c","a","t"],
+        [null,"m",null]
+      ]
+    }
+  ]
+}

@@ -1,281 +1,252 @@
 ## game_level.gd
-## Main game scene controller — translated from AMGGraphemeLevelScene.h/.m
-## Handles input (touch drag / swipe), level lifecycle, and ties all subsystems together.
+## Main game scene -- loads puzzle, splits into pieces, handles drag/tap/snap.
 ## Scene: res://scenes/game_level.tscn
 extends Node2D
 
-# Grid origin computed at runtime to centre the grid horizontally
-var _grid_origin: Vector2
+# -- State -----------------------------------------------------------------
 
-# ── State ─────────────────────────────────────────────────────────────────────
-
-var _selected_grapheme: Grapheme = null
-var _grapheme_sliders: Array = []   # [vowel_slider, consonant_slider, morpheme_slider]
+var _model_solution: Array = []           # Array of placement dicts from PieceSplitter
+var _piece_to_solution: Dictionary = {}   # Grapheme -> solution dict
+var _piece_tray: PieceTray = null
 var _level_over: bool = false
-var _winner: bool = false
-var _lives_left: int = Constants.START_LIVES
-var _prior_touch: Vector2 = Vector2.ZERO
-var _touch_start: Vector2 = Vector2.ZERO   # for swipe detection
-var _is_swiping: bool = false              # touch not yet claimed by a grapheme drag
 
-# ── Node refs ─────────────────────────────────────────────────────────────────
+var _touched_piece: Grapheme = null       # piece under current touch (before tap vs drag)
+var _selected_piece: Grapheme = null      # piece being actively dragged
+var _touch_start_pos: Vector2 = Vector2.ZERO
+var _is_dragging: bool = false
 
-@onready var _grid:         Grid            = $Grid
-@onready var _hud:          HUD             = $HUD
-@onready var _timer_bar:    TimerBar        = $TimerBar
-@onready var _sliders_root: Node2D          = $SlidersRoot
+var _tray_swipe_start: Vector2 = Vector2.ZERO
+var _is_tray_swiping: bool = false
 
-# ── Lifecycle ─────────────────────────────────────────────────────────────────
+# -- Node refs -------------------------------------------------------------
+
+@onready var _grid:      Grid     = $Grid
+@onready var _hud:       HUD      = $HUD
+@onready var _tray_root: Node2D   = $TrayRoot
+
+# -- Lifecycle -------------------------------------------------------------
 
 func _ready() -> void:
-    var vp_w := get_viewport_rect().size.x
-    _grid_origin = Vector2(
-        (vp_w - Constants.MAP_SIZE) * 0.5 + Constants.WORLD_TILE_SIZE * 0.5,
-        Constants.BORDER_SIZE + Constants.WORLD_TILE_SIZE * 0.5)
-    _start_level()
+	_start_level()
 
 func _start_level() -> void:
-    _build_grid()
-    _connect_hud()
-    _add_grapheme_sliders()
-    _setup_timer()
+	var cfg: Dictionary      = Leveller.get_level_config()
+	var shape_name: String = cfg.get("grid_shape", "digit_1")
+	var shape_data: Dictionary = Leveller.load_grid_shape(shape_name)
+	var puzzle: Dictionary     = Leveller.get_puzzle(shape_name)
 
-func _build_grid() -> void:
-    _grid.build(_grid_origin)
+	# Centre grid horizontally, top-pad vertically
+	var vp      := get_viewport_rect().size
+	var g_cols: int = shape_data.get("cols", 1)
+	var g_rows: int = shape_data.get("rows", 1)
+	var origin  := Vector2(
+		(vp.x - g_cols * Constants.WORLD_TILE_SIZE) * 0.5 + Constants.WORLD_TILE_SIZE * 0.5,
+		Constants.BORDER_SIZE + Constants.WORLD_TILE_SIZE * 0.5)
 
-func _connect_hud() -> void:
-    _hud.update_lives(_lives_left)
-    _hud.update_score(GameStats.score)
-    _hud.check_words_pressed.connect(_check_grid_for_words)
-    _hud.next_level_pressed.connect(_go_to_next_level)
-    _hud.redo_level_pressed.connect(_redo_level)
-    _hud.quit_pressed.connect(_quit_to_menu)
-    _grid.score_updated.connect(_on_score_updated)
-    _grid.words_validated.connect(_on_words_validated)
+	_grid.build(shape_data, origin)
 
-func _add_grapheme_sliders() -> void:
-    var tile_count := _grid.tile_count()
-    var vp_size    := get_viewport_rect().size
+	_hud.next_level_pressed.connect(_go_to_next_level)
+	_hud.redo_level_pressed.connect(_redo_level)
+	_hud.quit_pressed.connect(_quit_to_menu)
+	_grid.words_validated.connect(_on_words_validated)
 
-    # One slider per grapheme type: VOWEL=0, CONSONANT=1, MORPHEME=2
-    for type_idx in range(3):
-        var slider_scene := load("res://scenes/components/grapheme_slider.tscn") as PackedScene
-        var slider: GraphemeSlider = slider_scene.instantiate()
-        _sliders_root.add_child(slider)
+	# Split puzzle into pieces
+	var library     := PieceShape.load_library()
+	var rng         := RandomNumberGenerator.new()
+	rng.randomize()
+	var allowed: Array = cfg.get("allowed_piece_ids", [])
+	_model_solution = PieceSplitter.split(
+		shape_data.get("cells", []),
+		puzzle.get("fill", []),
+		library, rng, allowed)
 
-        # Mirror of SpriteKit: y = screen_height*(kplayAreaY - 0.09*type)  from bottom
-        #   → Godot (Y-down): y = screen_height * (1 - (0.35 - 0.09*type))
-        var y_frac := 1.0 - (Constants.PLAY_AREA_Y - 0.09 * type_idx)
-        slider.initialize(
-            Vector2(Constants.BORDER_SIZE, vp_size.y * y_frac),
-            vp_size.x - Constants.WORLD_TILE_SIZE * 0.5 - Constants.BORDER_SIZE,
-            type_idx as Constants.GraphemeType)
-        slider.show_graphemes(tile_count - 2)
-        _grapheme_sliders.append(slider)
+	# Instantiate piece nodes (setup before add_child so _ready builds visuals)
+	var piece_scene := load("res://scenes/components/grapheme.tscn") as PackedScene
+	var pieces: Array = []
+	for i in range(_model_solution.size()):
+		var sol: Dictionary = _model_solution[i]
+		var piece: Grapheme = piece_scene.instantiate()
+		var rand_rot: int = rng.randi_range(0, (sol["shape"] as PieceShape).rotation_count() - 1)
+		piece.setup(sol["shape"], rand_rot, sol["letters"])
+		add_child(piece)
+		_piece_to_solution[piece] = sol
+		pieces.append(piece)
 
-func _setup_timer() -> void:
-    _timer_bar.start_seconds = Constants.START_TIMER_SECONDS
-    _timer_bar.time_up.connect(_on_time_up)
-    # Delay start by 2 s (matches original SKAction waitForDuration:2.0)
-    await get_tree().create_timer(2.0).timeout
-    if not _level_over:
-        _timer_bar.start()
+	# Create tray below grid
+	var tray_scene := load("res://scenes/components/piece_tray.tscn") as PackedScene
+	_piece_tray = tray_scene.instantiate()
+	_tray_root.add_child(_piece_tray)
+	var tray_y := origin.y + g_rows * Constants.WORLD_TILE_SIZE + Constants.BORDER_SIZE * 2.0
+	_piece_tray.initialize(Vector2(0.0, tray_y), vp.x)
+	_piece_tray.load_pieces(pieces)
 
-# ── Input ─────────────────────────────────────────────────────────────────────
+# -- Input -----------------------------------------------------------------
 
 func _input(event: InputEvent) -> void:
-    if _level_over:
-        return
-
-    if event is InputEventScreenTouch:
-        _handle_touch(event as InputEventScreenTouch)
-    elif event is InputEventScreenDrag:
-        _handle_drag((event as InputEventScreenDrag).position,
-                     (event as InputEventScreenDrag).relative)
+	if _level_over:
+		return
+	if event is InputEventScreenTouch:
+		_handle_touch(event as InputEventScreenTouch)
+	elif event is InputEventScreenDrag:
+		_handle_drag((event as InputEventScreenDrag).position,
+					 (event as InputEventScreenDrag).relative)
 
 func _handle_touch(event: InputEventScreenTouch) -> void:
-    if event.pressed:
-        _touch_start  = event.position
-        _prior_touch  = event.position
-        _is_swiping   = true
-        _selected_grapheme = null
-
-        var g := _grapheme_at(event.position)
-        if g:
-            _is_swiping = false
-            _begin_drag(g, event.position)
-    else:
-        if _selected_grapheme:
-            _end_drag(event.position)
-        elif _is_swiping:
-            _try_swipe(event.position)
-        _is_swiping = false
+	if event.pressed:
+		_touch_start_pos  = event.position
+		_is_dragging      = false
+		_is_tray_swiping  = false
+		_touched_piece    = _piece_at(event.position)
+		_selected_piece   = null
+		if not _touched_piece:
+			_tray_swipe_start = event.position
+			_is_tray_swiping  = true
+	else:
+		if _selected_piece and _is_dragging:
+			_end_drag()
+		elif _touched_piece and not _is_dragging:
+			_tap_piece(_touched_piece)
+		elif _is_tray_swiping:
+			var dx := event.position.x - _tray_swipe_start.x
+			if abs(dx) >= Constants.SWIPE_MIN_DISTANCE and _piece_tray:
+				_piece_tray.scroll_by(dx)
+		_touched_piece   = null
+		_selected_piece  = null
+		_is_dragging     = false
+		_is_tray_swiping = false
 
 func _handle_drag(pos: Vector2, delta: Vector2) -> void:
-    if not _selected_grapheme or not _selected_grapheme.is_selected:
-        return
-    _selected_grapheme.global_position += delta
-    _prior_touch = pos
-    if _grid.is_point_in_grid(_selected_grapheme.global_position, _selected_grapheme):
-        _grid.rotate_grapheme_in_grid(delta,
-            _selected_grapheme.global_position, _selected_grapheme)
+	# Promote touch to drag once the finger moves enough
+	if _touched_piece and not _is_dragging:
+		if pos.distance_to(_touch_start_pos) >= Constants.TAP_MAX_DISTANCE:
+			_is_dragging     = true
+			_is_tray_swiping = false
+			_begin_drag(_touched_piece, pos)
+		return
 
-# ── Grapheme selection / drag ─────────────────────────────────────────────────
+	if not _selected_piece:
+		return
+	_selected_piece.global_position += delta
+	if _grid.is_point_in_grid(_selected_piece.global_position, _selected_piece):
+		_grid.highlight_tile(_selected_piece.global_position, _selected_piece)
+	else:
+		_grid.clear_highlights()
 
-func _grapheme_at(screen_pos: Vector2) -> Grapheme:
-    for slider in _grapheme_sliders:
-        for page in slider._pages:
-            for child in page.get_children():
-                if not (child is Grapheme):
-                    continue
-                var g := child as Grapheme
-                if not g.is_selectable:
-                    continue
-                if g.get_bounding_rect().has_point(g.to_local(screen_pos)):
-                    return g
-    # Also check graphemes already on the grid (but not disabled)
-    for t in _grid.tiles:
-        if t.grapheme == null:
-            continue
-        var g: Grapheme = t.grapheme
-        if g.grapheme_state == Constants.GraphemeState.DISABLED:
-            continue
-        if g.get_bounding_rect().has_point(g.to_local(screen_pos)):
-            return g
-    return null
+# -- Tap -------------------------------------------------------------------
+
+func _tap_piece(g: Grapheme) -> void:
+	var was_placed: bool = g.is_placed
+	var old_row: int     = g.start_tile_row
+	var old_col: int     = g.start_tile_col
+
+	if was_placed:
+		_grid.remove_from_grid(g)
+
+	g.tap_rotate()
+
+	if was_placed:
+		var anchor: Tile = _grid.get_tile(old_row, old_col)
+		if anchor:
+			g.global_position  = anchor.global_position
+			g.start_tile_row   = old_row
+			g.start_tile_col   = old_col
+			if _grid.snap_to_tile(g):
+				_check_piece_vs_solution(g)
+				if _grid.all_pieces_placed():
+					_grid.check_for_valid_words()
+				return
+		_return_to_tray(g)
+
+# -- Drag ------------------------------------------------------------------
+
+func _piece_at(screen_pos: Vector2) -> Grapheme:
+	if _piece_tray:
+		for piece in _piece_tray.get_available_pieces():
+			if piece.is_selectable and \
+			   piece.get_bounding_rect().has_point(piece.to_local(screen_pos)):
+				return piece
+	for t in _grid.tiles:
+		if t.grapheme == null:
+			continue
+		var g: Grapheme = t.grapheme
+		if g.grapheme_state == Constants.GraphemeState.DISABLED:
+			continue
+		if g.get_bounding_rect().has_point(g.to_local(screen_pos)):
+			return g
+	return null
 
 func _begin_drag(g: Grapheme, pos: Vector2) -> void:
-    _selected_grapheme  = g
-    g.pre_move_position = g.global_position
-    g.set_selected(true)
+	_selected_piece     = g
+	g.pre_move_position = g.global_position
+	g.set_selected(true)
+	# Reparent to scene root for top-layer rendering
+	if g.get_parent() != self:
+		if g.get_parent():
+			g.get_parent().remove_child(g)
+		add_child(g)
+	if g.is_placed:
+		_grid.remove_from_grid(g)
+	else:
+		_piece_tray.detach_piece(g)
+	g.global_position = pos
 
-    # Always reparent to scene root for top-level rendering during drag
-    if g.get_parent():
-        g.get_parent().remove_child(g)
-    add_child(g)
+func _end_drag() -> void:
+	var g: Grapheme = _selected_piece
+	_selected_piece = null
+	if not is_instance_valid(g):
+		return
 
-    var slider: GraphemeSlider = _grapheme_sliders[g.grapheme_type]
-    slider._placed_graphemes.erase(g)
+	var placed := false
+	if _grid.is_point_in_grid(g.global_position, g):
+		placed = _grid.snap_to_tile(g)
+		if placed:
+			_piece_tray.mark_placed(g)
+			_check_piece_vs_solution(g)
+			if _grid.all_pieces_placed():
+				_grid.check_for_valid_words()
 
-    if g.is_placed:
-        _grid.remove_from_grid(g)
+	if not placed:
+		_return_to_tray(g)
 
-    g.global_position = pos
+	g.set_selected(false)
 
-func _end_drag(_pos: Vector2) -> void:
-    var g := _selected_grapheme
-    _selected_grapheme = null
+func _return_to_tray(g: Grapheme) -> void:
+	if g.get_parent() and g.get_parent() != _piece_tray:
+		g.get_parent().remove_child(g)
+	g.is_placed      = false
+	g.grapheme_state = Constants.GraphemeState.IDLE
+	g.z_index        = Constants.WorldLayer.GRAPHEME
+	g.is_selectable  = true
+	_piece_tray.return_piece(g)
 
-    if not is_instance_valid(g):
-        return
+# -- Solution check --------------------------------------------------------
 
-    var placed := false
-    if _grid.is_point_in_grid(g.global_position, g):
-        placed = _grid.snap_to_tile(g)
-        if placed:
-            var slider: GraphemeSlider = _grapheme_sliders[g.grapheme_type]
-            slider.mark_placed(g)
-            _check_grid_for_words()
+## Immediately mark tiles VALIDATED when the piece matches the model solution.
+func _check_piece_vs_solution(g: Grapheme) -> void:
+	if not _piece_to_solution.has(g):
+		return
+	var sol: Dictionary = _piece_to_solution[g]
+	if _grid.check_piece_vs_solution(g, sol):
+		for off in g.cells:
+			var t: Tile = _grid.get_tile(g.start_tile_row + (off as Vector2i).x,
+										 g.start_tile_col + (off as Vector2i).y)
+			if t:
+				t.set_state(Constants.TileState.VALIDATED)
 
-    if not placed:
-        _return_to_slider(g)
+# -- Grid signal -----------------------------------------------------------
 
-    g.set_selected(false)
+func _on_words_validated(all_valid: bool, _invalid_cells: Array) -> void:
+	_level_over = all_valid
+	_hud.show_level_end(all_valid)
 
-func _return_to_slider(g: Grapheme) -> void:
-    var slider: GraphemeSlider = _grapheme_sliders[g.grapheme_type]
-    if g.get_parent():
-        g.get_parent().remove_child(g)
-    if not slider._pages.is_empty():
-        slider._pages[slider._current_page].add_child(g)
-    g.is_placed          = false
-    g.grapheme_state     = Constants.GraphemeState.IDLE
-    g.z_index            = Constants.WorldLayer.GRAPHEME
-    g.global_position    = g.pre_move_position
-    g.is_selectable      = true
-
-# ── Swipe detection (slider page change) ────────────────────────────────────
-
-func _try_swipe(end_pos: Vector2) -> void:
-    var dx := end_pos.x - _touch_start.x
-    if abs(dx) < Constants.SWIPE_MIN_DISTANCE:
-        return
-    var direction := 1 if dx < 0 else -1   # swipe left → forward, swipe right → back
-    # Find which slider was swiped (by vertical position)
-    for slider in _grapheme_sliders:
-        var slider_y: float = slider.global_position.y
-        if abs(_touch_start.y - slider_y) < Constants.WORLD_TILE_SIZE * 2:
-            slider.slide(direction)
-            return
-
-# ── Grid word check ───────────────────────────────────────────────────────────
-
-func _check_grid_for_words() -> void:
-    _grid.check_for_valid_words()
-    _hud.update_progress(
-        _grid.number_of_words,
-        Leveller.level_criteria(Constants.LevelCriteriaType.NUMBER_OF_WORDS),
-        _grid.tiles_used_count(),
-        Leveller.level_criteria(Constants.LevelCriteriaType.TILES_FILLED))
-    _check_level_complete()
-
-# ── Signals from grid ─────────────────────────────────────────────────────────
-
-func _on_score_updated(delta: int) -> void:
-    GameStats.score += delta
-    _hud.update_score(GameStats.score)
-
-func _on_words_validated(_words: Array) -> void:
-    if GameStats.new_best_word:
-        GameStats.new_best_word = false
-        _hud.show_best_word(GameStats.best_word, GameStats.best_word_score)
-
-# ── Timer ─────────────────────────────────────────────────────────────────────
-
-func _on_time_up() -> void:
-    if _level_over:
-        return
-    _level_over = true
-    _winner = false
-    _end_level()
-
-# ── Level completion ──────────────────────────────────────────────────────────
-
-func _check_level_complete() -> void:
-    if _level_over:
-        return
-    var words_ok := _grid.number_of_words >= \
-        Leveller.level_criteria(Constants.LevelCriteriaType.NUMBER_OF_WORDS)
-    var score_ok := GameStats.score >= \
-        Leveller.level_criteria(Constants.LevelCriteriaType.PLAYER_SCORE)
-    var tiles_ok := _grid.tiles_used_count() >= \
-        Leveller.level_criteria(Constants.LevelCriteriaType.TILES_FILLED)
-
-    if words_ok and score_ok and tiles_ok:
-        _winner = true
-        _level_over = true
-        _timer_bar.stop()
-        _end_level()
-
-func _end_level() -> void:
-    GameStats.save()
-    _hud.show_level_end(_winner)
-    for slider in _grapheme_sliders:
-        slider.remove_all()
-
-# ── Navigation ────────────────────────────────────────────────────────────────
+# -- Navigation ------------------------------------------------------------
 
 func _go_to_next_level() -> void:
-    if _winner and Leveller.level < Constants.MAX_LEVELS - 1:
-        Leveller.level += 1
-    else:
-        GameStats.reset()
-        Leveller.level = 0
-    get_tree().reload_current_scene()
+	Leveller.level = (Leveller.level + 1) % Constants.MAX_LEVELS
+	get_tree().reload_current_scene()
 
 func _redo_level() -> void:
-    GameStats.reset()
-    get_tree().reload_current_scene()
+	get_tree().reload_current_scene()
 
 func _quit_to_menu() -> void:
-    get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")

@@ -26,17 +26,6 @@ theme_override_font_sizes/font_size = 72
 text = "GRAPHEMEX"
 horizontal_alignment = 1
 
-[node name="HiScoreLabel" type="Label" parent="UI" unique_id=554762461]
-layout_mode = 0
-anchor_top = 0.45
-anchor_right = 1.0
-anchor_bottom = 0.45
-offset_top = -30.0
-offset_bottom = 90.0
-theme_override_font_sizes/font_size = 40
-text = "Best score: 0"
-horizontal_alignment = 1
-
 [node name="PlayButton" type="Button" parent="UI" unique_id=2085391181]
 layout_mode = 0
 anchor_left = 0.5

@@ -6,7 +6,3 @@
 script = ExtResource("1_grapheme1")
 
 [node name="LetterSprites" type="Node2D" parent="."]
-
-[node name="ScoreLabel" type="Label" parent="."]
-visible = false
-theme_override_font_sizes/font_size = 16

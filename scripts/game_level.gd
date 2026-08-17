@@ -146,11 +146,14 @@ func _tap_piece(g: Grapheme) -> void:
 	g.tap_rotate()
 
 	if was_placed:
-		var anchor: Tile = _grid.get_tile(old_row, old_col)
+		# After rotation, cells[0] may be a different offset; find its tile from stored origin.
+		var first: Vector2i = g.cells[0]
+		var anchor: Tile = _grid.get_tile(old_row + first.x, old_col + first.y)
 		if anchor:
-			g.global_position  = anchor.global_position
-			g.start_tile_row   = old_row
-			g.start_tile_col   = old_col
+			g.global_position = anchor.global_position \
+				- Vector2(first.y * Constants.WORLD_TILE_SIZE, first.x * Constants.WORLD_TILE_SIZE)
+			g.start_tile_row = old_row
+			g.start_tile_col = old_col
 			if _grid.snap_to_tile(g):
 				_check_piece_vs_solution(g)
 				if _grid.all_pieces_placed():

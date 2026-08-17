@@ -1,6 +1,6 @@
 ﻿{
   "levels": [
-    { "level": 0, "grid_shape": "digit_4", "allowed_piece_ids": ["dot","tromino_I", "cross"] },
+    { "level": 0, "grid_shape": "digit_4", "allowed_piece_ids": ["dot","domino","cross"] },
     { "level": 1, "grid_shape": "digit_2", "allowed_piece_ids": ["dot","domino","tromino_I","tromino_L"] },
     { "level": 2, "grid_shape": "digit_3", "allowed_piece_ids": ["dot","domino","tromino_I","tromino_L","tetromino_I"] },
     { "level": 3, "grid_shape": "digit_1", "allowed_piece_ids": ["dot","domino","tromino_I","tromino_L","tetromino_I"] }, 

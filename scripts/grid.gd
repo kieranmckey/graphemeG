@@ -100,10 +100,13 @@ func snap_to_tile(grapheme: Grapheme) -> bool:
 	if candidates.size() != grapheme.cells.size():
 		return false
 
+	# candidates[0] is the tile for cells[0]; back-compute the piece-local (0,0) origin.
+	var first: Vector2i = grapheme.cells[0]
 	var anchor: Tile = candidates[0]
-	grapheme.global_position = anchor.global_position
-	grapheme.start_tile_row  = anchor.row
-	grapheme.start_tile_col  = anchor.col
+	grapheme.global_position = anchor.global_position \
+		- Vector2(first.y * Constants.WORLD_TILE_SIZE, first.x * Constants.WORLD_TILE_SIZE)
+	grapheme.start_tile_row  = anchor.row - first.x
+	grapheme.start_tile_col  = anchor.col - first.y
 
 	for i in range(candidates.size()):
 		var t: Tile = candidates[i]
@@ -125,14 +128,20 @@ func remove_from_grid(grapheme: Grapheme) -> void:
 	grapheme.is_placed      = false
 	grapheme.grapheme_state = Constants.GraphemeState.IDLE
 
-## Candidates for a 2-D piece: anchor = nearest tile, cells extend by piece offsets.
+## Candidates for a 2-D piece: snaps so cells[0] aligns with its nearest grid tile.
 func _candidate_tiles(world_pos: Vector2, grapheme: Grapheme) -> Array:
-	var anchor: Tile = nearest_tile(world_pos)
+	if grapheme.cells.is_empty():
+		return []
+	var first: Vector2i = grapheme.cells[0]
+	var first_world := world_pos + Vector2(first.y * Constants.WORLD_TILE_SIZE,
+										   first.x * Constants.WORLD_TILE_SIZE)
+	var anchor: Tile = nearest_tile(first_world)
 	if not anchor:
 		return []
 	var result: Array = []
 	for off in grapheme.cells:
-		var t: Tile = get_tile(anchor.row + (off as Vector2i).x, anchor.col + (off as Vector2i).y)
+		var v := off as Vector2i
+		var t: Tile = get_tile(anchor.row + (v.x - first.x), anchor.col + (v.y - first.y))
 		if t == null:
 			return []
 		if t.tile_state != Constants.TileState.IDLE and \

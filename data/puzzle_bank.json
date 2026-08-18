@@ -1,108 +1,580 @@
 {
   "digit_1": [
-    { "id": 1, "fill": [["c"],["a"],["s"],["t"],["l"],["e"]] },
-    { "id": 2, "fill": [["s"],["i"],["m"],["p"],["l"],["e"]] },
-    { "id": 3, "fill": [["s"],["i"],["n"],["g"],["l"],["e"]] },
-    { "id": 4, "fill": [["b"],["o"],["t"],["t"],["l"],["e"]] },
-    { "id": 5, "fill": [["h"],["a"],["n"],["d"],["l"],["e"]] }
-  ],
-  "digit_2": [
     {
       "id": 1,
+      "difficulty": "Medium",
       "fill": [
-        ["e","r","a"],
-        [null,null,"c"],
-        ["e","v","e"],
-        ["a",null,null],
-        ["r","y","e"]
+        [
+          "s"
+        ],
+        [
+          "e"
+        ],
+        [
+          "l"
+        ],
+        [
+          "e"
+        ],
+        [
+          "c"
+        ],
+        [
+          "t"
+        ]
       ]
     },
     {
       "id": 2,
+      "difficulty": "Easy",
       "fill": [
-        ["g","a","s"],
-        [null,null,"a"],
-        ["t","a","t"],
-        ["o",null,null],
-        ["p","o","t"]
+        [
+          "f"
+        ],
+        [
+          "u"
+        ],
+        [
+          "t"
+        ],
+        [
+          "u"
+        ],
+        [
+          "r"
+        ],
+        [
+          "e"
+        ]
+      ]
+    },
+    {
+      "id": 3,
+      "difficulty": "Medium",
+      "fill": [
+        [
+          "a"
+        ],
+        [
+          "c"
+        ],
+        [
+          "t"
+        ],
+        [
+          "i"
+        ],
+        [
+          "n"
+        ],
+        [
+          "g"
+        ]
+      ]
+    }
+  ],
+  "digit_2": [
+    {
+      "id": 1,
+      "difficulty": "Hard",
+      "fill": [
+        [
+          "w",
+          "e",
+          "e"
+        ],
+        [
+          null,
+          null,
+          "y"
+        ],
+        [
+          "o",
+          "w",
+          "e"
+        ],
+        [
+          "a",
+          null,
+          null
+        ],
+        [
+          "t",
+          "a",
+          "b"
+        ]
+      ]
+    },
+    {
+      "id": 2,
+      "difficulty": "Hard",
+      "fill": [
+        [
+          "e",
+          "r",
+          "r"
+        ],
+        [
+          null,
+          null,
+          "u"
+        ],
+        [
+          "w",
+          "e",
+          "e"
+        ],
+        [
+          "e",
+          null,
+          null
+        ],
+        [
+          "b",
+          "o",
+          "x"
+        ]
+      ]
+    },
+    {
+      "id": 3,
+      "difficulty": "Hard",
+      "fill": [
+        [
+          "z",
+          "o",
+          "o"
+        ],
+        [
+          null,
+          null,
+          "u"
+        ],
+        [
+          "n",
+          "e",
+          "t"
+        ],
+        [
+          "a",
+          null,
+          null
+        ],
+        [
+          "m",
+          "a",
+          "p"
+        ]
       ]
     }
   ],
   "digit_3": [
     {
       "id": 1,
+      "difficulty": "Hard",
       "fill": [
-        ["b","u","s"],
-        [null,null,"p"],
-        ["e","g","o"],
-        [null,null,"r"],
-        ["b","a","t"]
+        [
+          "c",
+          "o",
+          "t"
+        ],
+        [
+          null,
+          null,
+          "a"
+        ],
+        [
+          "a",
+          "s",
+          "k"
+        ],
+        [
+          null,
+          null,
+          "e"
+        ],
+        [
+          "l",
+          "a",
+          "s"
+        ]
       ]
-    },    
+    },
     {
       "id": 2,
+      "difficulty": "Hard",
       "fill": [
-        ["h","i","s"],
-        [null,null,"t"],
-        ["e","r","a"],
-        [null,null,"l"],
-        ["a","c","e"]
+        [
+          "a",
+          "d",
+          "s"
+        ],
+        [
+          null,
+          null,
+          "t"
+        ],
+        [
+          "f",
+          "l",
+          "u"
+        ],
+        [
+          null,
+          null,
+          "d"
+        ],
+        [
+          "b",
+          "o",
+          "y"
+        ]
+      ]
+    },
+    {
+      "id": 3,
+      "difficulty": "Hard",
+      "fill": [
+        [
+          "a",
+          "d",
+          "o"
+        ],
+        [
+          null,
+          null,
+          "c"
+        ],
+        [
+          "t",
+          "h",
+          "e"
+        ],
+        [
+          null,
+          null,
+          "a"
+        ],
+        [
+          "c",
+          "a",
+          "n"
+        ]
       ]
     }
   ],
   "digit_4": [
     {
       "id": 1,
+      "difficulty": "Hard",
       "fill": [
-        ["b", null,"s",null,null],
-        ["e", null,"p",null,null],
-        ["d",  "o","o","m" ,null],
-        [null,null,"r",null,null],
-        [null,null,"t",null,null]
+        [
+          "h",
+          null,
+          "t",
+          null,
+          null
+        ],
+        [
+          "u",
+          null,
+          "i",
+          null,
+          null
+        ],
+        [
+          "h",
+          "o",
+          "m",
+          "e",
+          null
+        ],
+        [
+          null,
+          null,
+          "e",
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          "s",
+          null,
+          null
+        ]
+      ]
+    },
+    {
+      "id": 2,
+      "difficulty": "Medium",
+      "fill": [
+        [
+          "m",
+          null,
+          "g",
+          null,
+          null
+        ],
+        [
+          "a",
+          null,
+          "r",
+          null,
+          null
+        ],
+        [
+          "p",
+          "r",
+          "a",
+          "y",
+          null
+        ],
+        [
+          null,
+          null,
+          "s",
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          "s",
+          null,
+          null
+        ]
+      ]
+    },
+    {
+      "id": 3,
+      "difficulty": "Hard",
+      "fill": [
+        [
+          "o",
+          null,
+          "t",
+          null,
+          null
+        ],
+        [
+          "f",
+          null,
+          "w",
+          null,
+          null
+        ],
+        [
+          "t",
+          "a",
+          "i",
+          "l",
+          null
+        ],
+        [
+          null,
+          null,
+          "c",
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          "e",
+          null,
+          null
+        ]
       ]
     }
   ],
   "shape_L": [
     {
       "id": 1,
+      "difficulty": "Easy",
       "fill": [
-        ["t",null,null],
-        ["r",null,null],
-        ["i",null,null],
-        ["c",null,null],
-        ["k","i","t"]
+        [
+          "e",
+          null,
+          null
+        ],
+        [
+          "a",
+          null,
+          null
+        ],
+        [
+          "r",
+          null,
+          null
+        ],
+        [
+          "l",
+          null,
+          null
+        ],
+        [
+          "y",
+          "e",
+          "s"
+        ]
       ]
     },
     {
       "id": 2,
+      "difficulty": "Easy",
       "fill": [
-        ["b",null,null],
-        ["l",null,null],
-        ["a",null,null],
-        ["s",null,null],
-        ["t","o","e"]
+        [
+          "f",
+          null,
+          null
+        ],
+        [
+          "l",
+          null,
+          null
+        ],
+        [
+          "u",
+          null,
+          null
+        ],
+        [
+          "i",
+          null,
+          null
+        ],
+        [
+          "d",
+          "i",
+          "e"
+        ]
+      ]
+    },
+    {
+      "id": 3,
+      "difficulty": "Easy",
+      "fill": [
+        [
+          "f",
+          null,
+          null
+        ],
+        [
+          "o",
+          null,
+          null
+        ],
+        [
+          "r",
+          null,
+          null
+        ],
+        [
+          "t",
+          null,
+          null
+        ],
+        [
+          "y",
+          "o",
+          "u"
+        ]
       ]
     }
   ],
   "shape_plus": [
     {
       "id": 1,
+      "difficulty": "Medium",
       "fill": [
-        [null,"s",null],
-        ["a","p","t"],
-        [null,"a",null],
-        ["a","r","c"],
-        [null,"e",null]
+        [
+          null,
+          "s",
+          null
+        ],
+        [
+          "a",
+          "t",
+          "e"
+        ],
+        [
+          null,
+          "o",
+          null
+        ],
+        [
+          "t",
+          "r",
+          "y"
+        ],
+        [
+          null,
+          "y",
+          null
+        ]
       ]
     },
     {
       "id": 2,
+      "difficulty": "Hard",
       "fill": [
-        [null,"s",null],
-        ["a","t","e"],
-        [null,"e",null],
-        ["c","a","t"],
-        [null,"m",null]
+        [
+          null,
+          "p",
+          null
+        ],
+        [
+          "f",
+          "r",
+          "y"
+        ],
+        [
+          null,
+          "i",
+          null
+        ],
+        [
+          "a",
+          "d",
+          "s"
+        ],
+        [
+          null,
+          "e",
+          null
+        ]
+      ]
+    },
+    {
+      "id": 3,
+      "difficulty": "Medium",
+      "fill": [
+        [
+          null,
+          "u",
+          null
+        ],
+        [
+          "e",
+          "n",
+          "g"
+        ],
+        [
+          null,
+          "t",
+          null
+        ],
+        [
+          "s",
+          "i",
+          "x"
+        ],
+        [
+          null,
+          "l",
+          null
+        ]
       ]
     }
   ]

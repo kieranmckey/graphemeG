@@ -17,6 +17,7 @@ var grapheme_state: Constants.GraphemeState = Constants.GraphemeState.IDLE
 var pre_move_position: Vector2 = Vector2.ZERO
 var start_tile_row: int = 0
 var start_tile_col: int = 0
+var drag_anchor: Vector2i = Vector2i.ZERO  # piece cell beneath the finger during drag
 
 # -- Node refs -------------------------------------------------------------
 
@@ -30,6 +31,7 @@ func setup(shape: PieceShape, initial_rotation: int, p_letters: Array) -> void:
 	rotation_index = initial_rotation
 	letters        = p_letters
 	cells          = shape.get_cells(rotation_index)
+	drag_anchor    = cells[0] if not cells.is_empty() else Vector2i.ZERO
 
 func _ready() -> void:
 	if piece_shape:
@@ -46,7 +48,7 @@ func _build_visuals() -> void:
 		# off.x = row -> Y, off.y = col -> X
 		cell_node.position = Vector2(off.y * Constants.WORLD_TILE_SIZE,
 									 off.x * Constants.WORLD_TILE_SIZE)
-		cell_node.setup(letters[i].to_upper(), tile_tex, font, Constants.GRAPHEME_TILE_FONT_SIZE)
+		cell_node.setup(letters[i].to_lower(), tile_tex, font, Constants.GRAPHEME_TILE_FONT_SIZE)
 		_letters_root.add_child(cell_node)
 
 # -- Rotation --------------------------------------------------------------

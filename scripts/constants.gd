@@ -15,11 +15,13 @@ const SWIPE_MIN_DISTANCE: float = 40.0 # px — tray scroll threshold
 
 # --- Asset paths ---
 const LETTERS_DIR: String = "res://assets/letters/"
-const FONT_PATH: String = "res://assets/fonts/Kenney Future.ttf"
+const FONT_PATH: String = "res://assets/fonts/Xolonium-Bold.ttf" 
+#"res://assets/fonts/Kenney Future.ttf"
 const UI_BUTTON_PATH: String = "res://assets/ui/button_rectangle_flat.png"
 const GRAPHEME_TILES_DIR: String = "res://assets/grapheme_tiles/"
 const GRID_TILES_DIR: String = "res://assets/grid_tiles/"
-const GRAPHEME_TILE_FONT_SIZE: int = 68
+const GRAPHEME_TILE_FONT_SIZE: int = 96
+const LETTER_Y_OFFSET: float = 8.0   # fine-tune vertical glyph centering
 const UI_FONT_SIZE: int = 48
 const WORDS_LIST_PATH: String = "res://data/words7.txt"
 const LEVEL_DATA_PATH: String = "res://data/level_data.json"

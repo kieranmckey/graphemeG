@@ -21,8 +21,8 @@ func setup(ch: String, tile_tex: Texture2D, font: Font, font_size: int) -> void:
 	add_child(_label)
 
 func _ready() -> void:
-	# Size the label AFTER entering the tree so the layout system doesn't reset it.
+	# Size and position the label after entering the tree; add offset to nudge baseline down.
 	if _label:
 		var hw := Constants.WORLD_TILE_SIZE * 0.5
-		_label.position = Vector2(-hw, -hw)
+		_label.position = Vector2(-hw, -hw + Constants.LETTER_Y_OFFSET)
 		_label.size = Vector2(Constants.WORLD_TILE_SIZE, Constants.WORLD_TILE_SIZE)

@@ -34,6 +34,9 @@ OUTPUT_FILE = DATA_DIR / "puzzle_bank.json"
 
 DEFAULT_COUNT    = 30      # puzzles to generate per shape
 MAX_SOLVER_CALLS = 10_000  # backtracker budget per puzzle attempt
+MAX_WORD_RANK    = 8_000   # only use words ranked within the top-N most common; filters
+                           # proper nouns (joseph) and abbreviations (nth, del) that appear
+                           # in corpora but aren't suitable puzzle answers
 
 # ---------------------------------------------------------------------------
 # Frequency list
@@ -72,14 +75,16 @@ def load_freq_dict() -> dict:
 # Word index  (words7.txt is the validity source; freq order drives quality)
 # ---------------------------------------------------------------------------
 
-def load_word_index(freq_dict: dict) -> dict:
-    """Returns {length: [words sorted common-first]}."""
+def load_word_index(freq_dict: dict, max_rank: int = MAX_WORD_RANK) -> dict:
+    """Returns {length: [words sorted common-first]}, limited to words within max_rank."""
     by_len: dict = {}
     with open(WORDS_FILE, encoding="utf-8") as fh:
         for line in fh:
             w = line.strip().lower()
             if w.isalpha():
-                by_len.setdefault(len(w), []).append(w)
+                rank = freq_dict.get(w, 999_999)
+                if rank <= max_rank:
+                    by_len.setdefault(len(w), []).append(w)
     for wlist in by_len.values():
         # Sort common words first; unknown/rare words fall to the end
         wlist.sort(key=lambda w: freq_dict.get(w, 999_999))
@@ -289,6 +294,10 @@ def main() -> None:
         "--seed", type=int, default=None,
         help="Random seed for reproducibility"
     )
+    parser.add_argument(
+        "--max-rank", type=int, default=MAX_WORD_RANK,
+        help=f"Only use words ranked within top-N by frequency (default: {MAX_WORD_RANK})"
+    )
     args = parser.parse_args()
 
     if args.seed is not None:
@@ -296,7 +305,7 @@ def main() -> None:
 
     ensure_freq_file()
     freq_dict  = load_freq_dict()
-    word_index = load_word_index(freq_dict)
+    word_index = load_word_index(freq_dict, args.max_rank)
 
     with open(SHAPES_FILE) as fh:
         shapes: dict = json.load(fh)

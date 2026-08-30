@@ -146,8 +146,8 @@ func _tap_piece(g: Grapheme) -> void:
 	g.tap_rotate()
 
 	if was_placed:
-		# After rotation, cells[0] may be a different offset; find its tile from stored origin.
 		var first: Vector2i = g.cells[0]
+		g.drag_anchor = first  # tap-rotate snaps via cells[0], consistent with stored origin
 		var anchor: Tile = _grid.get_tile(old_row + first.x, old_col + first.y)
 		if anchor:
 			g.global_position = anchor.global_position \
@@ -182,6 +182,17 @@ func _piece_at(screen_pos: Vector2) -> Grapheme:
 func _begin_drag(g: Grapheme, pos: Vector2) -> void:
 	_selected_piece     = g
 	g.pre_move_position = g.global_position
+	# Determine which cell of the piece the finger touched, so that cell tracks the finger.
+	var local_grab := pos - g.global_position
+	g.drag_anchor = g.cells[0] if not g.cells.is_empty() else Vector2i.ZERO
+	var best_d := INF
+	for off in g.cells:
+		var v := off as Vector2i
+		var d := Vector2(v.y * Constants.WORLD_TILE_SIZE,
+						 v.x * Constants.WORLD_TILE_SIZE).distance_squared_to(local_grab)
+		if d < best_d:
+			best_d = d
+			g.drag_anchor = v
 	g.set_selected(true)
 	# Reparent to scene root for top-layer rendering
 	if g.get_parent() != self:
@@ -192,7 +203,10 @@ func _begin_drag(g: Grapheme, pos: Vector2) -> void:
 		_grid.remove_from_grid(g)
 	else:
 		_piece_tray.detach_piece(g)
-	g.global_position = pos
+	# Position piece so the grabbed cell sits under the finger.
+	g.global_position = pos - Vector2(
+		g.drag_anchor.y * Constants.WORLD_TILE_SIZE,
+		g.drag_anchor.x * Constants.WORLD_TILE_SIZE)
 
 func _end_drag() -> void:
 	var g: Grapheme = _selected_piece

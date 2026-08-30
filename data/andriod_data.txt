@@ -1,0 +1,6 @@
+andriod data
+
+C:\Program Files\Eclipse Adoptium\jdk-17.0.20.8-hotspot\
+C:\Program Files\Android\Android Studio
+
+C:\Users\kiera\AppData\Local\Android\Sdk

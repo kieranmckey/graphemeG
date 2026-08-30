@@ -100,13 +100,15 @@ func snap_to_tile(grapheme: Grapheme) -> bool:
 	if candidates.size() != grapheme.cells.size():
 		return false
 
-	# candidates[0] is the tile for cells[0]; back-compute the piece-local (0,0) origin.
-	var first: Vector2i = grapheme.cells[0]
-	var anchor: Tile = candidates[0]
-	grapheme.global_position = anchor.global_position \
-		- Vector2(first.y * Constants.WORLD_TILE_SIZE, first.x * Constants.WORLD_TILE_SIZE)
-	grapheme.start_tile_row  = anchor.row - first.x
-	grapheme.start_tile_col  = anchor.col - first.y
+	# Use drag_anchor to find the tile for that cell, then back-compute the piece-local (0,0) origin.
+	var anch: Vector2i = grapheme.drag_anchor
+	var anch_idx: int  = grapheme.cells.find(anch)
+	if anch_idx < 0: anch_idx = 0
+	var anch_tile: Tile = candidates[anch_idx]
+	grapheme.global_position = anch_tile.global_position \
+		- Vector2(anch.y * Constants.WORLD_TILE_SIZE, anch.x * Constants.WORLD_TILE_SIZE)
+	grapheme.start_tile_row  = anch_tile.row - anch.x
+	grapheme.start_tile_col  = anch_tile.col - anch.y
 
 	for i in range(candidates.size()):
 		var t: Tile = candidates[i]
@@ -128,20 +130,21 @@ func remove_from_grid(grapheme: Grapheme) -> void:
 	grapheme.is_placed      = false
 	grapheme.grapheme_state = Constants.GraphemeState.IDLE
 
-## Candidates for a 2-D piece: snaps so cells[0] aligns with its nearest grid tile.
+## Candidates for a 2-D piece: snaps so the grabbed cell (drag_anchor) aligns with its nearest tile.
 func _candidate_tiles(world_pos: Vector2, grapheme: Grapheme) -> Array:
 	if grapheme.cells.is_empty():
 		return []
-	var first: Vector2i = grapheme.cells[0]
-	var first_world := world_pos + Vector2(first.y * Constants.WORLD_TILE_SIZE,
-										   first.x * Constants.WORLD_TILE_SIZE)
-	var anchor: Tile = nearest_tile(first_world)
-	if not anchor:
+	var anch: Vector2i = grapheme.drag_anchor
+	var anch_world := world_pos + Vector2(anch.y * Constants.WORLD_TILE_SIZE,
+										  anch.x * Constants.WORLD_TILE_SIZE)
+	var anchor_tile: Tile = nearest_tile(anch_world)
+	if not anchor_tile:
 		return []
 	var result: Array = []
 	for off in grapheme.cells:
 		var v := off as Vector2i
-		var t: Tile = get_tile(anchor.row + (v.x - first.x), anchor.col + (v.y - first.y))
+		var t: Tile = get_tile(anchor_tile.row + (v.x - anch.x),
+							   anchor_tile.col + (v.y - anch.y))
 		if t == null:
 			return []
 		if t.tile_state != Constants.TileState.IDLE and \

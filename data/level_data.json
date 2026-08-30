@@ -8,7 +8,8 @@
     { "level": 5, "grid_shape": "digit_1", "allowed_piece_ids": [] },
     { "level": 6, "grid_shape": "digit_2", "allowed_piece_ids": [] },
     { "level": 7, "grid_shape": "digit_3", "allowed_piece_ids": [] },
-    { "level": 8, "grid_shape": "shape_L",    "allowed_piece_ids": [] },
-    { "level": 9, "grid_shape": "shape_plus", "allowed_piece_ids": [] }
+    { "level": 8, "grid_shape": "digit_4", "allowed_piece_ids": ["dot","domino","cross"]}, 
+    { "level": 9, "grid_shape": "shape_L",    "allowed_piece_ids": [] },
+    { "level": 10, "grid_shape": "shape_plus", "allowed_piece_ids": [] }
   ]
 }

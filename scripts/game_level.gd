@@ -67,7 +67,7 @@ func _start_level() -> void:
 		var sol: Dictionary = _model_solution[i]
 		var piece: Grapheme = piece_scene.instantiate()
 		var rand_rot: int = rng.randi_range(0, (sol["shape"] as PieceShape).rotation_count() - 1)
-		piece.setup(sol["shape"], rand_rot, sol["letters"])
+		piece.setup(sol["shape"], rand_rot, sol["letters"], sol["rotation"])
 		add_child(piece)
 		_piece_to_solution[piece] = sol
 		pieces.append(piece)
@@ -137,8 +137,6 @@ func _handle_drag(pos: Vector2, delta: Vector2) -> void:
 
 func _tap_piece(g: Grapheme) -> void:
 	var was_placed: bool = g.is_placed
-	var old_row: int     = g.start_tile_row
-	var old_col: int     = g.start_tile_col
 
 	if was_placed:
 		_grid.remove_from_grid(g)
@@ -146,19 +144,11 @@ func _tap_piece(g: Grapheme) -> void:
 	g.tap_rotate()
 
 	if was_placed:
-		var first: Vector2i = g.cells[0]
-		g.drag_anchor = first  # tap-rotate snaps via cells[0], consistent with stored origin
-		var anchor: Tile = _grid.get_tile(old_row + first.x, old_col + first.y)
-		if anchor:
-			g.global_position = anchor.global_position \
-				- Vector2(first.y * Constants.WORLD_TILE_SIZE, first.x * Constants.WORLD_TILE_SIZE)
-			g.start_tile_row = old_row
-			g.start_tile_col = old_col
-			if _grid.snap_to_tile(g):
-				_check_piece_vs_solution(g)
-				if _grid.all_pieces_placed():
-					_grid.check_for_valid_words()
-				return
+		if _grid.snap_to_tile(g):
+			_check_piece_vs_solution(g)
+			if _grid.all_pieces_placed():
+				_grid.check_for_valid_words()
+			return
 		_return_to_tray(g)
 
 # -- Drag ------------------------------------------------------------------

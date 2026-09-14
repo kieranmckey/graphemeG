@@ -5,7 +5,7 @@ class_name Constants
 # --- Layout ---
 const START_LEVEL: int = 0
 const MAX_LEVELS: int = 10
-const BORDER_SIZE: float = 25.0
+const BORDER_SIZE: float = 125.0
 const WORLD_TILE_SIZE: float = 120.0
 const LETTER_SCALE: float = WORLD_TILE_SIZE / 64.0
 const DISABLED_ALPHA: float = 0.15

@@ -3,6 +3,7 @@
 extends Node
 
 var level: int = Constants.START_LEVEL
+var selected_difficulty: String = "Any"
 
 var _word_set: Dictionary = {}
 var _level_configs: Array = []
@@ -78,6 +79,11 @@ func get_puzzle(shape_name: String) -> Dictionary:
 		push_error("Leveller: no puzzles for shape '%s'" % shape_name)
 		return {}
 	var puzzles: Array = _puzzle_bank[shape_name]
+	if selected_difficulty != "Any":
+		var matching := puzzles.filter(
+			func(p): return p.get("difficulty", "") == selected_difficulty)
+		if not matching.is_empty():
+			puzzles = matching
 	if puzzles.is_empty():
 		return {}
 	var used: Array = _used_puzzles.get(shape_name, [])
@@ -86,10 +92,13 @@ func get_puzzle(shape_name: String) -> Dictionary:
 		used.clear()
 		_used_puzzles[shape_name] = used
 		unused = puzzles.duplicate()
-	var pick = unused[_rng.randi_range(0, unused.size() - 1)]
+	var pick = unused[0]
 	used.append(pick["id"])
 	_used_puzzles[shape_name] = used
 	return pick
+
+func set_difficulty(value: String) -> void:
+	selected_difficulty = value
 
 func is_word_valid(word: String) -> bool:
 	return _word_set.has(word)

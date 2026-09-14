@@ -10,6 +10,7 @@ var piece_shape: PieceShape = null
 var rotation_index: int = 0
 var cells: Array = []          # current rotation's Array[Vector2i] offsets (row, col)
 var letters: Array = []        # one String per cell, matching cells order
+var pivot_letter_index: int = 0
 var is_placed: bool = false
 var is_selectable: bool = true
 var is_selected: bool = false
@@ -26,12 +27,17 @@ var drag_anchor: Vector2i = Vector2i.ZERO  # piece cell beneath the finger durin
 # -- Setup -----------------------------------------------------------------
 
 ## Call before add_child so _ready() can build visuals immediately.
-func setup(shape: PieceShape, initial_rotation: int, p_letters: Array) -> void:
+func setup(shape: PieceShape, initial_rotation: int, p_letters: Array,
+		source_rotation: int = 0) -> void:
 	piece_shape    = shape
 	rotation_index = initial_rotation
-	letters        = p_letters
+	letters        = shape.remap_letters(p_letters, source_rotation, initial_rotation)
 	cells          = shape.get_cells(rotation_index)
-	drag_anchor    = cells[0] if not cells.is_empty() else Vector2i.ZERO
+	pivot_letter_index = cells.find(shape.remap_cell(
+		shape.get_pivot_cell(source_rotation), source_rotation, initial_rotation))
+	if pivot_letter_index < 0:
+		pivot_letter_index = 0
+	drag_anchor = cells[pivot_letter_index] if not cells.is_empty() else Vector2i.ZERO
 
 func _ready() -> void:
 	if piece_shape:
@@ -56,8 +62,19 @@ func _build_visuals() -> void:
 func tap_rotate() -> void:
 	if piece_shape == null:
 		return
-	rotation_index = (rotation_index + 1) % piece_shape.rotation_count()
+	var next_rotation := (rotation_index + 1) % piece_shape.rotation_count()
+	var old_pivot: Vector2i = cells[pivot_letter_index] if not cells.is_empty() else Vector2i.ZERO
+	var new_pivot: Vector2i = piece_shape.remap_cell(old_pivot, rotation_index, next_rotation)
+	letters = piece_shape.remap_letters(letters, rotation_index, next_rotation)
+	rotation_index = next_rotation
 	cells = piece_shape.get_cells(rotation_index)
+	pivot_letter_index = cells.find(new_pivot)
+	if pivot_letter_index < 0:
+		pivot_letter_index = 0
+	var old_pivot_position := Vector2(old_pivot.y, old_pivot.x) * Constants.WORLD_TILE_SIZE
+	var new_pivot_position := Vector2(new_pivot.y, new_pivot.x) * Constants.WORLD_TILE_SIZE
+	global_position += old_pivot_position - new_pivot_position
+	drag_anchor = cells[pivot_letter_index] if not cells.is_empty() else Vector2i.ZERO
 	_build_visuals()
 
 # -- Bounding rect (local space) -------------------------------------------

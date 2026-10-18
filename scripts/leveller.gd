@@ -70,6 +70,12 @@ func get_level_config() -> Dictionary:
 		return _level_configs[level]
 	return {}
 
+func get_level_count() -> int:
+	return _level_configs.size()
+
+func get_level_shape(index: int) -> String:
+	return _level_configs[index].get("grid_shape", "") if index < _level_configs.size() else ""
+
 func load_grid_shape(shape_name: String) -> Dictionary:
 	return _grid_shapes.get(shape_name, {})
 

@@ -1,15 +1,144 @@
-﻿{
+{
   "levels": [
-    { "level": 0, "grid_shape": "digit_1", "allowed_piece_ids": ["dot","domino","tromino_I","tromino_L","tetromino_I"]  },
-    { "level": 1, "grid_shape": "digit_2", "allowed_piece_ids": ["dot","domino","tromino_I","tromino_L"] },
-    { "level": 2, "grid_shape": "digit_3", "allowed_piece_ids": ["dot","domino","tromino_I","tromino_L","tetromino_I"] },
-    { "level": 3, "grid_shape": "digit_4", "allowed_piece_ids": ["dot","domino","cross"]}, 
-    { "level": 4, "grid_shape": "shape_plus", "allowed_piece_ids": [] },
-    { "level": 5, "grid_shape": "digit_1", "allowed_piece_ids": [] },
-    { "level": 6, "grid_shape": "digit_2", "allowed_piece_ids": [] },
-    { "level": 7, "grid_shape": "digit_3", "allowed_piece_ids": [] },
-    { "level": 8, "grid_shape": "digit_4", "allowed_piece_ids": ["dot","domino","cross"]}, 
-    { "level": 9, "grid_shape": "shape_L",    "allowed_piece_ids": [] },
-    { "level": 10, "grid_shape": "shape_plus", "allowed_piece_ids": [] }
+    {
+      "level": 0,
+      "grid_shape": "digit_1",
+      "allowed_piece_ids": [
+        "dot",
+        "domino",
+        "tromino_I",
+        "tromino_L",
+        "tetromino_I"
+      ]
+    },
+    {
+      "level": 1,
+      "grid_shape": "digit_2",
+      "allowed_piece_ids": [
+        "dot",
+        "domino",
+        "tromino_I",
+        "tromino_L"
+      ]
+    },
+    {
+      "level": 2,
+      "grid_shape": "digit_3",
+      "allowed_piece_ids": [
+        "dot",
+        "domino",
+        "tromino_I",
+        "tromino_L",
+        "tetromino_I"
+      ]
+    },
+    {
+      "level": 3,
+      "grid_shape": "digit_4",
+      "allowed_piece_ids": [
+        "dot",
+        "domino",
+        "cross"
+      ]
+    },
+    {
+      "level": 4,
+      "grid_shape": "shape_plus",
+      "allowed_piece_ids": []
+    },
+    {
+      "level": 5,
+      "grid_shape": "digit_1",
+      "allowed_piece_ids": []
+    },
+    {
+      "level": 6,
+      "grid_shape": "digit_2",
+      "allowed_piece_ids": []
+    },
+    {
+      "level": 7,
+      "grid_shape": "digit_3",
+      "allowed_piece_ids": []
+    },
+    {
+      "level": 8,
+      "grid_shape": "digit_4",
+      "allowed_piece_ids": [
+        "dot",
+        "domino",
+        "cross"
+      ]
+    },
+    {
+      "level": 9,
+      "grid_shape": "shape_L",
+      "allowed_piece_ids": []
+    },
+    {
+      "level": 10,
+      "grid_shape": "shape_plus",
+      "allowed_piece_ids": []
+    },
+    {
+      "level": 11,
+      "grid_shape": "wf_433_1",
+      "allowed_piece_ids": []
+    },
+    {
+      "level": 12,
+      "grid_shape": "wf_433_2",
+      "allowed_piece_ids": []
+    },
+    {
+      "level": 13,
+      "grid_shape": "wf_533_1",
+      "allowed_piece_ids": []
+    },
+    {
+      "level": 14,
+      "grid_shape": "wf_533_2",
+      "allowed_piece_ids": []
+    },
+    {
+      "level": 15,
+      "grid_shape": "wf_4433_1",
+      "allowed_piece_ids": []
+    },
+    {
+      "level": 16,
+      "grid_shape": "wf_4433_2",
+      "allowed_piece_ids": []
+    },
+    {
+      "level": 17,
+      "grid_shape": "wf_5433_1",
+      "allowed_piece_ids": []
+    },
+    {
+      "level": 18,
+      "grid_shape": "wf_5433_2",
+      "allowed_piece_ids": []
+    },
+    {
+      "level": 19,
+      "grid_shape": "wf_5443_1",
+      "allowed_piece_ids": []
+    },
+    {
+      "level": 20,
+      "grid_shape": "wf_5443_2",
+      "allowed_piece_ids": []
+    },
+    {
+      "level": 21,
+      "grid_shape": "wf_5533_1",
+      "allowed_piece_ids": []
+    },
+    {
+      "level": 22,
+      "grid_shape": "wf_5533_2",
+      "allowed_piece_ids": []
+    }
   ]
 }

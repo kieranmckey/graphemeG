@@ -44,6 +44,8 @@ func _start_level() -> void:
 		Constants.BORDER_SIZE + Constants.WORLD_TILE_SIZE * 0.5)
 
 	_grid.build(shape_data, origin)
+	_hud.set_info("%s   |   Level %d: %s" % [
+		puzzle.get("difficulty", "Any"), Leveller.level, shape_name])
 
 	_hud.next_level_pressed.connect(_go_to_next_level)
 	_hud.redo_level_pressed.connect(_redo_level)
@@ -240,6 +242,7 @@ func _check_piece_vs_solution(g: Grapheme) -> void:
 										 g.start_tile_col + (off as Vector2i).y)
 			if t:
 				t.set_state(Constants.TileState.VALIDATED)
+		g.lock()
 
 # -- Grid signal -----------------------------------------------------------
 
@@ -250,7 +253,7 @@ func _on_words_validated(all_valid: bool, _invalid_cells: Array) -> void:
 # -- Navigation ------------------------------------------------------------
 
 func _go_to_next_level() -> void:
-	Leveller.level = (Leveller.level + 1) % Constants.MAX_LEVELS
+	Leveller.level = (Leveller.level + 1) % Leveller.get_level_count()
 	get_tree().reload_current_scene()
 
 func _redo_level() -> void:

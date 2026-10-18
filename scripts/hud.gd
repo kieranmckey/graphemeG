@@ -13,12 +13,48 @@ signal quit_pressed()
 @onready var _redo_btn:  Button  = $LevelEndPanel/RedoButton
 @onready var _quit_btn:  Button  = $LevelEndPanel/QuitButton
 
+var _info_label: Label = null
+
 func _ready() -> void:
 	_end_panel.visible = false
 	_next_btn.pressed.connect(func(): next_level_pressed.emit())
 	_redo_btn.pressed.connect(func(): redo_level_pressed.emit())
 	_quit_btn.pressed.connect(func(): quit_pressed.emit())
+	_build_footer_buttons()
 	_apply_theme()
+
+func _build_footer_buttons() -> void:
+	var specs := [["RESTART", 0.3, redo_level_pressed], ["QUIT", 0.7, quit_pressed]]
+	for spec in specs:
+		var b := Button.new()
+		b.text = spec[0]
+		b.anchor_left = spec[1]
+		b.anchor_right = spec[1]
+		b.anchor_top = 1.0
+		b.anchor_bottom = 1.0
+		b.offset_left = -80.0
+		b.offset_right = 80.0
+		b.offset_top = -110.0
+		b.offset_bottom = -56.0
+		var sig: Signal = spec[2]
+		b.pressed.connect(func(): sig.emit())
+		add_child(b)
+
+func set_info(text: String) -> void:
+	if _info_label == null:
+		_info_label = Label.new()
+		_info_label.anchor_left = 0.0
+		_info_label.anchor_right = 1.0
+		_info_label.anchor_top = 1.0
+		_info_label.anchor_bottom = 1.0
+		_info_label.offset_top = -48.0
+		_info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_info_label.add_theme_font_size_override("font_size", 22)
+		var font: FontFile = load(Constants.FONT_PATH) as FontFile
+		if font:
+			_info_label.add_theme_font_override("font", font)
+		add_child(_info_label)
+	_info_label.text = text
 
 func show_level_end(won: bool) -> void:
 	_end_panel.visible = true

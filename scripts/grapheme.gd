@@ -13,6 +13,7 @@ var letters: Array = []        # one String per cell, matching cells order
 var pivot_letter_index: int = 0
 var is_placed: bool = false
 var is_selectable: bool = true
+var is_locked: bool = false
 var is_selected: bool = false
 var grapheme_state: Constants.GraphemeState = Constants.GraphemeState.IDLE
 var pre_move_position: Vector2 = Vector2.ZERO
@@ -56,6 +57,17 @@ func _build_visuals() -> void:
 									 off.x * Constants.WORLD_TILE_SIZE)
 		cell_node.setup(letters[i].to_lower(), tile_tex, font, Constants.GRAPHEME_TILE_FONT_SIZE)
 		_letters_root.add_child(cell_node)
+		if is_locked:
+			cell_node.show_border(Color(0.2, 0.9, 0.3))
+
+## Correctly placed piece: green border, no further interaction.
+func lock() -> void:
+	is_locked = true
+	is_selectable = false
+	grapheme_state = Constants.GraphemeState.DISABLED
+	for cell_node in _letters_root.get_children():
+		if cell_node is LetterCell:
+			(cell_node as LetterCell).show_border(Color(0.2, 0.9, 0.3))
 
 # -- Rotation --------------------------------------------------------------
 
@@ -65,17 +77,27 @@ func tap_rotate() -> void:
 	var next_rotation := (rotation_index + 1) % piece_shape.rotation_count()
 	var old_pivot: Vector2i = cells[pivot_letter_index] if not cells.is_empty() else Vector2i.ZERO
 	var new_pivot: Vector2i = piece_shape.remap_cell(old_pivot, rotation_index, next_rotation)
+	var old_center := _cells_center(cells)
 	letters = piece_shape.remap_letters(letters, rotation_index, next_rotation)
 	rotation_index = next_rotation
 	cells = piece_shape.get_cells(rotation_index)
 	pivot_letter_index = cells.find(new_pivot)
 	if pivot_letter_index < 0:
 		pivot_letter_index = 0
-	var old_pivot_position := Vector2(old_pivot.y, old_pivot.x) * Constants.WORLD_TILE_SIZE
-	var new_pivot_position := Vector2(new_pivot.y, new_pivot.x) * Constants.WORLD_TILE_SIZE
-	global_position += old_pivot_position - new_pivot_position
+	global_position += old_center - _cells_center(cells)
 	drag_anchor = cells[pivot_letter_index] if not cells.is_empty() else Vector2i.ZERO
 	_build_visuals()
+
+# Centre of the cells' bounding box in local pixels.
+func _cells_center(p_cells: Array) -> Vector2:
+	if p_cells.is_empty():
+		return Vector2.ZERO
+	var lo := Vector2i(p_cells[0])
+	var hi := lo
+	for c in p_cells:
+		lo = Vector2i(mini(lo.x, c.x), mini(lo.y, c.y))
+		hi = Vector2i(maxi(hi.x, c.x), maxi(hi.y, c.y))
+	return Vector2(lo.y + hi.y, lo.x + hi.x) * 0.5 * Constants.WORLD_TILE_SIZE
 
 # -- Bounding rect (local space) -------------------------------------------
 

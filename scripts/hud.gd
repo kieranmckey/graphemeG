@@ -34,8 +34,8 @@ func _build_footer_buttons() -> void:
 		b.anchor_bottom = 1.0
 		b.offset_left = -80.0
 		b.offset_right = 80.0
-		b.offset_top = -110.0
-		b.offset_bottom = -56.0
+		b.offset_top = -190.0
+		b.offset_bottom = -136.0
 		var sig: Signal = spec[2]
 		b.pressed.connect(func(): sig.emit())
 		add_child(b)

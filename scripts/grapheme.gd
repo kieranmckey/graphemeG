@@ -62,6 +62,8 @@ func _build_visuals() -> void:
 
 ## Correctly placed piece: green border, no further interaction.
 func lock() -> void:
+	if is_locked:
+		return
 	is_locked = true
 	is_selectable = false
 	grapheme_state = Constants.GraphemeState.DISABLED

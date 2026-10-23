@@ -139,6 +139,210 @@
       "level": 22,
       "grid_shape": "wf_5533_2",
       "allowed_piece_ids": []
+    },
+    {
+      "level": 23,
+      "grid_shape": "wf_433_2",
+      "allowed_piece_ids": [
+        "dot",
+        "domino",
+        "tromino_I",
+        "tromino_L",
+        "tetromino_I",
+        "tetromino_L",
+        "tetromino_S",
+        "tetromino_O"
+      ]
+    },
+    {
+      "level": 24,
+      "grid_shape": "wf_533_1",
+      "allowed_piece_ids": [
+        "dot",
+        "domino"
+      ]
+    },
+    {
+      "level": 25,
+      "grid_shape": "wf_4433_1",
+      "allowed_piece_ids": [
+        "dot",
+        "domino",
+        "tromino_I",
+        "tromino_L",
+        "tetromino_I",
+        "tetromino_L",
+        "tetromino_S",
+        "tetromino_O"
+      ]
+    },
+    {
+      "level": 26,
+      "grid_shape": "wf_5433_2",
+      "allowed_piece_ids": [
+        "dot",
+        "domino"
+      ]
+    },
+    {
+      "level": 27,
+      "grid_shape": "wf_5443_1",
+      "allowed_piece_ids": [
+        "dot",
+        "domino",
+        "tromino_I",
+        "tromino_L",
+        "tetromino_I",
+        "tetromino_L",
+        "tetromino_S",
+        "tetromino_O"
+      ]
+    },
+    {
+      "level": 28,
+      "grid_shape": "wf_5533_2",
+      "allowed_piece_ids": [
+        "dot",
+        "domino"
+      ]
+    },
+    {
+      "level": 29,
+      "grid_shape": "digit_4",
+      "allowed_piece_ids": [
+        "dot",
+        "domino"
+      ]
+    },
+    {
+      "level": 30,
+      "grid_shape": "shape_plus",
+      "allowed_piece_ids": [
+        "dot",
+        "domino",
+        "tromino_I",
+        "tromino_L",
+        "tetromino_I",
+        "tetromino_L",
+        "tetromino_S",
+        "tetromino_O"
+      ]
+    },
+    {
+      "level": 31,
+      "grid_shape": "big_5544_1",
+      "allowed_piece_ids": [
+        "dot",
+        "domino",
+        "tromino_I",
+        "tromino_L",
+        "tetromino_I",
+        "tetromino_L",
+        "tetromino_S",
+        "tetromino_O"
+      ]
+    },
+    {
+      "level": 32,
+      "grid_shape": "big_5544_2",
+      "allowed_piece_ids": [
+        "dot",
+        "domino",
+        "tromino_I",
+        "tromino_L",
+        "tetromino_I",
+        "tetromino_L",
+        "tetromino_S",
+        "tetromino_O"
+      ]
+    },
+    {
+      "level": 33,
+      "grid_shape": "big_6543_1",
+      "allowed_piece_ids": [
+        "dot",
+        "domino"
+      ]
+    },
+    {
+      "level": 34,
+      "grid_shape": "big_6543_2",
+      "allowed_piece_ids": [
+        "dot",
+        "domino"
+      ]
+    },
+    {
+      "level": 35,
+      "grid_shape": "big_6554_1",
+      "allowed_piece_ids": [
+        "dot",
+        "domino",
+        "tromino_I",
+        "tromino_L",
+        "tetromino_I",
+        "tetromino_L",
+        "tetromino_S",
+        "tetromino_O"
+      ]
+    },
+    {
+      "level": 36,
+      "grid_shape": "big_6554_2",
+      "allowed_piece_ids": [
+        "dot",
+        "domino",
+        "tromino_I",
+        "tromino_L",
+        "tetromino_I",
+        "tetromino_L",
+        "tetromino_S",
+        "tetromino_O"
+      ]
+    },
+    {
+      "level": 37,
+      "grid_shape": "big_7543_1",
+      "allowed_piece_ids": [
+        "dot",
+        "domino"
+      ]
+    },
+    {
+      "level": 38,
+      "grid_shape": "big_7543_2",
+      "allowed_piece_ids": [
+        "dot",
+        "domino"
+      ]
+    },
+    {
+      "level": 39,
+      "grid_shape": "big_6644_1",
+      "allowed_piece_ids": [
+        "dot",
+        "domino",
+        "tromino_I",
+        "tromino_L",
+        "tetromino_I",
+        "tetromino_L",
+        "tetromino_S",
+        "tetromino_O"
+      ]
+    },
+    {
+      "level": 40,
+      "grid_shape": "big_6644_2",
+      "allowed_piece_ids": [
+        "dot",
+        "domino",
+        "tromino_I",
+        "tromino_L",
+        "tetromino_I",
+        "tetromino_L",
+        "tetromino_S",
+        "tetromino_O"
+      ]
     }
   ]
 }

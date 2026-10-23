@@ -248,6 +248,9 @@ func _check_piece_vs_solution(g: Grapheme) -> void:
 
 func _on_words_validated(all_valid: bool, _invalid_cells: Array) -> void:
 	_level_over = all_valid
+	if all_valid:
+		for g in _piece_to_solution:
+			g.lock()
 	_hud.show_level_end(all_valid)
 
 # -- Navigation ------------------------------------------------------------

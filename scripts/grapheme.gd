@@ -55,7 +55,7 @@ func _build_visuals() -> void:
 		# off.x = row -> Y, off.y = col -> X
 		cell_node.position = Vector2(off.y * Constants.WORLD_TILE_SIZE,
 									 off.x * Constants.WORLD_TILE_SIZE)
-		cell_node.setup(letters[i].to_lower(), tile_tex, font, Constants.GRAPHEME_TILE_FONT_SIZE)
+		cell_node.setup(letters[i].to_upper(), tile_tex, font, Constants.GRAPHEME_TILE_FONT_SIZE)
 		_letters_root.add_child(cell_node)
 		if is_locked:
 			cell_node.show_border(Color(0.2, 0.9, 0.3))

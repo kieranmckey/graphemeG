@@ -24,7 +24,7 @@ func _ready() -> void:
 	_apply_theme()
 
 func _build_footer_buttons() -> void:
-	var specs := [["RESTART", 0.3, redo_level_pressed], ["QUIT", 0.7, quit_pressed]]
+	var specs := [["RESTART", 0.2, redo_level_pressed], ["QUIT", 0.8, quit_pressed]]
 	for spec in specs:
 		var b := Button.new()
 		b.text = spec[0]
@@ -34,8 +34,8 @@ func _build_footer_buttons() -> void:
 		b.anchor_bottom = 1.0
 		b.offset_left = -80.0
 		b.offset_right = 80.0
-		b.offset_top = -190.0
-		b.offset_bottom = -136.0
+		b.offset_top = -100.0
+		b.offset_bottom = -46.0
 		var sig: Signal = spec[2]
 		b.pressed.connect(func(): sig.emit())
 		add_child(b)
@@ -47,8 +47,10 @@ func set_info(text: String) -> void:
 		_info_label.anchor_right = 1.0
 		_info_label.anchor_top = 1.0
 		_info_label.anchor_bottom = 1.0
-		_info_label.offset_top = -48.0
+		_info_label.offset_top = -110.0
+		_info_label.offset_bottom = -50.0
 		_info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_info_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		_info_label.add_theme_font_size_override("font_size", 22)
 		var font: FontFile = load(Constants.FONT_PATH) as FontFile
 		if font:
@@ -56,10 +58,11 @@ func set_info(text: String) -> void:
 		add_child(_info_label)
 	_info_label.text = text
 
-func show_level_end(won: bool) -> void:
+func show_level_end(won: bool, final_level: bool = false) -> void:
 	_end_panel.visible = true
 	_next_btn.visible  = won
 	_redo_btn.visible  = not won
+	_next_btn.text = "BACK TO MENU" if final_level else "NEXT LEVEL"
 
 func _apply_theme() -> void:
 	var font: FontFile = load(Constants.FONT_PATH) as FontFile

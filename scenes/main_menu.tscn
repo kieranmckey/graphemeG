@@ -17,10 +17,6 @@ grow_vertical = 2
 
 [node name="TitleLabel" type="Label" parent="UI" unique_id=1458527188]
 layout_mode = 1
-anchors_preset = -1
-anchor_top = 0.25
-anchor_right = 1.0
-anchor_bottom = 0.25
 offset_left = 319.0
 offset_top = 172.0
 offset_right = 755.0
@@ -29,16 +25,38 @@ theme_override_font_sizes/font_size = 72
 text = "GRAPHEMEX"
 horizontal_alignment = 1
 
+[node name="LevelLabel" type="Label" parent="UI" unique_id=365787292]
+layout_mode = 1
+offset_left = 260.0
+offset_top = 390.0
+offset_right = 820.0
+offset_bottom = 438.0
+theme_override_font_sizes/font_size = 30
+text = "SELECT LEVEL"
+horizontal_alignment = 1
+
+[node name="LevelSelect" type="OptionButton" parent="UI" unique_id=1104271557]
+layout_mode = 1
+offset_left = 280.0
+offset_top = 450.0
+offset_right = 800.0
+offset_bottom = 514.0
+theme_override_font_sizes/font_size = 26
+
+[node name="ProgressLabel" type="Label" parent="UI" unique_id=2027093327]
+layout_mode = 1
+offset_left = 220.0
+offset_top = 530.0
+offset_right = 860.0
+offset_bottom = 576.0
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+
 [node name="PlayButton" type="Button" parent="UI" unique_id=2085391181]
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 0.65
-anchor_right = 0.5
-anchor_bottom = 0.65
-offset_left = 425.0
-offset_top = 360.0
-offset_right = 665.0
-offset_bottom = 440.0
+offset_left = 390.0
+offset_top = 612.0
+offset_right = 666.0
+offset_bottom = 692.0
 theme_override_font_sizes/font_size = 52
-text = "PLAY"
+text = "CONTINUE"

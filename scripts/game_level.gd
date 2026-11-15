@@ -31,7 +31,7 @@ func _ready() -> void:
 
 func _start_level() -> void:
 	var cfg: Dictionary      = Leveller.get_level_config()
-	var shape_name: String = cfg.get("grid_shape", "digit_1")
+	var shape_name: String = cfg.get("grid_shape", "")
 	var shape_data: Dictionary = Leveller.load_grid_shape(shape_name)
 	var puzzle: Dictionary     = Leveller.get_puzzle(shape_name)
 
@@ -44,8 +44,8 @@ func _start_level() -> void:
 		Constants.BORDER_SIZE + Constants.WORLD_TILE_SIZE * 0.5)
 
 	_grid.build(shape_data, origin)
-	_hud.set_info("%s   |   Level %d: %s" % [
-		puzzle.get("difficulty", "Any"), Leveller.level, shape_name])
+	_hud.set_info("Level %d: %s\n%s" % [
+		Leveller.level + 1, shape_name, puzzle.get("difficulty", "Any")])
 
 	_hud.next_level_pressed.connect(_go_to_next_level)
 	_hud.redo_level_pressed.connect(_redo_level)
@@ -152,6 +152,8 @@ func _tap_piece(g: Grapheme) -> void:
 				_grid.check_for_valid_words()
 			return
 		_return_to_tray(g)
+	else:
+		_piece_tray.reposition_piece(g)
 
 # -- Drag ------------------------------------------------------------------
 
@@ -249,14 +251,18 @@ func _check_piece_vs_solution(g: Grapheme) -> void:
 func _on_words_validated(all_valid: bool, _invalid_cells: Array) -> void:
 	_level_over = all_valid
 	if all_valid:
+		Leveller.complete_level(Leveller.level)
 		for g in _piece_to_solution:
 			g.lock()
-	_hud.show_level_end(all_valid)
+	_hud.show_level_end(all_valid, Leveller.level == Leveller.get_level_count() - 1)
 
 # -- Navigation ------------------------------------------------------------
 
 func _go_to_next_level() -> void:
-	Leveller.level = (Leveller.level + 1) % Leveller.get_level_count()
+	if Leveller.level >= Leveller.get_level_count() - 1:
+		_quit_to_menu()
+		return
+	Leveller.level += 1
 	get_tree().reload_current_scene()
 
 func _redo_level() -> void:

@@ -1,348 +1,203 @@
 {
+  "piece_sets": {
+    "intro": [
+      "dot",
+      "domino",
+      "tetromino_T"
+    ],
+    "starter": [
+      "dot",
+      "domino"
+    ],
+    "straight": [
+      "dot",
+      "domino",
+      "tromino_I"
+    ],
+    "corner": [
+      "dot",
+      "domino",
+      "tromino_I",
+      "tromino_L"
+    ],
+    "long": [
+      "dot",
+      "domino",
+      "tromino_I",
+      "tromino_L",
+      "tetromino_I"
+    ],
+    "mixed": [
+      "dot",
+      "domino",
+      "tromino_I",
+      "tromino_L",
+      "tetromino_I",
+      "tetromino_L",
+      "tetromino_S",
+      "tetromino_O"
+    ]
+  },
   "levels": [
     {
       "level": 0,
-      "grid_shape": "digit_1",
-      "allowed_piece_ids": [
-        "dot",
-        "domino",
-        "tromino_I",
-        "tromino_L",
-        "tetromino_I"
-      ]
+      "grid_shape": "shape_plus",
+      "piece_set": "intro"
     },
     {
       "level": 1,
-      "grid_shape": "digit_2",
-      "allowed_piece_ids": [
-        "dot",
-        "domino",
-        "tromino_I",
-        "tromino_L"
-      ]
+      "grid_shape": "shape_L",
+      "piece_set": "intro"
     },
     {
       "level": 2,
-      "grid_shape": "digit_3",
-      "allowed_piece_ids": [
-        "dot",
-        "domino",
-        "tromino_I",
-        "tromino_L",
-        "tetromino_I"
-      ]
+      "grid_shape": "shape_plus",
+      "piece_set": "intro"
     },
     {
       "level": 3,
-      "grid_shape": "digit_4",
-      "allowed_piece_ids": [
-        "dot",
-        "domino",
-        "cross"
-      ]
+      "grid_shape": "wf_433_1",
+      "piece_set": "straight"
     },
     {
       "level": 4,
-      "grid_shape": "shape_plus",
-      "allowed_piece_ids": []
+      "grid_shape": "wf_433_2",
+      "piece_set": "straight"
     },
     {
       "level": 5,
-      "grid_shape": "digit_1",
-      "allowed_piece_ids": []
+      "grid_shape": "wf_533_1",
+      "piece_set": "straight"
     },
     {
       "level": 6,
-      "grid_shape": "digit_2",
-      "allowed_piece_ids": []
+      "grid_shape": "wf_533_2",
+      "piece_set": "corner"
     },
     {
       "level": 7,
-      "grid_shape": "digit_3",
-      "allowed_piece_ids": []
+      "grid_shape": "wf_4433_1",
+      "piece_set": "corner"
     },
     {
       "level": 8,
-      "grid_shape": "digit_4",
-      "allowed_piece_ids": [
-        "dot",
-        "domino",
-        "cross"
-      ]
+      "grid_shape": "wf_4433_2",
+      "piece_set": "corner"
     },
     {
       "level": 9,
-      "grid_shape": "shape_L",
-      "allowed_piece_ids": []
+      "grid_shape": "wf_5433_1",
+      "piece_set": "long"
     },
     {
       "level": 10,
-      "grid_shape": "shape_plus",
-      "allowed_piece_ids": []
+      "grid_shape": "wf_5433_2",
+      "piece_set": "long"
     },
     {
       "level": 11,
-      "grid_shape": "wf_433_1",
-      "allowed_piece_ids": []
+      "grid_shape": "wf_5443_1",
+      "piece_set": "long"
     },
     {
       "level": 12,
-      "grid_shape": "wf_433_2",
-      "allowed_piece_ids": []
+      "grid_shape": "wf_5443_2",
+      "piece_set": "mixed"
     },
     {
       "level": 13,
-      "grid_shape": "wf_533_1",
-      "allowed_piece_ids": []
+      "grid_shape": "wf_5533_1",
+      "piece_set": "mixed"
     },
     {
       "level": 14,
-      "grid_shape": "wf_533_2",
-      "allowed_piece_ids": []
+      "grid_shape": "wf_5533_2",
+      "piece_set": "mixed"
     },
     {
       "level": 15,
-      "grid_shape": "wf_4433_1",
-      "allowed_piece_ids": []
+      "grid_shape": "wf_433_2",
+      "piece_set": "mixed"
     },
     {
       "level": 16,
-      "grid_shape": "wf_4433_2",
-      "allowed_piece_ids": []
+      "grid_shape": "wf_533_1",
+      "piece_set": "starter"
     },
     {
       "level": 17,
-      "grid_shape": "wf_5433_1",
-      "allowed_piece_ids": []
+      "grid_shape": "wf_4433_1",
+      "piece_set": "mixed"
     },
     {
       "level": 18,
       "grid_shape": "wf_5433_2",
-      "allowed_piece_ids": []
+      "piece_set": "starter"
     },
     {
       "level": 19,
       "grid_shape": "wf_5443_1",
-      "allowed_piece_ids": []
+      "piece_set": "mixed"
     },
     {
       "level": 20,
-      "grid_shape": "wf_5443_2",
-      "allowed_piece_ids": []
+      "grid_shape": "wf_5533_2",
+      "piece_set": "starter"
     },
     {
       "level": 21,
-      "grid_shape": "wf_5533_1",
-      "allowed_piece_ids": []
+      "grid_shape": "shape_plus",
+      "piece_set": "mixed"
     },
     {
       "level": 22,
-      "grid_shape": "wf_5533_2",
-      "allowed_piece_ids": []
+      "grid_shape": "big_5544_1",
+      "piece_set": "mixed"
     },
     {
       "level": 23,
-      "grid_shape": "wf_433_2",
-      "allowed_piece_ids": [
-        "dot",
-        "domino",
-        "tromino_I",
-        "tromino_L",
-        "tetromino_I",
-        "tetromino_L",
-        "tetromino_S",
-        "tetromino_O"
-      ]
+      "grid_shape": "big_5544_2",
+      "piece_set": "mixed"
     },
     {
       "level": 24,
-      "grid_shape": "wf_533_1",
-      "allowed_piece_ids": [
-        "dot",
-        "domino"
-      ]
+      "grid_shape": "big_6543_1",
+      "piece_set": "starter"
     },
     {
       "level": 25,
-      "grid_shape": "wf_4433_1",
-      "allowed_piece_ids": [
-        "dot",
-        "domino",
-        "tromino_I",
-        "tromino_L",
-        "tetromino_I",
-        "tetromino_L",
-        "tetromino_S",
-        "tetromino_O"
-      ]
+      "grid_shape": "big_6543_2",
+      "piece_set": "starter"
     },
     {
       "level": 26,
-      "grid_shape": "wf_5433_2",
-      "allowed_piece_ids": [
-        "dot",
-        "domino"
-      ]
+      "grid_shape": "big_6554_1",
+      "piece_set": "mixed"
     },
     {
       "level": 27,
-      "grid_shape": "wf_5443_1",
-      "allowed_piece_ids": [
-        "dot",
-        "domino",
-        "tromino_I",
-        "tromino_L",
-        "tetromino_I",
-        "tetromino_L",
-        "tetromino_S",
-        "tetromino_O"
-      ]
+      "grid_shape": "big_6554_2",
+      "piece_set": "mixed"
     },
     {
       "level": 28,
-      "grid_shape": "wf_5533_2",
-      "allowed_piece_ids": [
-        "dot",
-        "domino"
-      ]
+      "grid_shape": "big_7543_1",
+      "piece_set": "starter"
     },
     {
       "level": 29,
-      "grid_shape": "digit_4",
-      "allowed_piece_ids": [
-        "dot",
-        "domino"
-      ]
+      "grid_shape": "big_7543_2",
+      "piece_set": "starter"
     },
     {
       "level": 30,
-      "grid_shape": "shape_plus",
-      "allowed_piece_ids": [
-        "dot",
-        "domino",
-        "tromino_I",
-        "tromino_L",
-        "tetromino_I",
-        "tetromino_L",
-        "tetromino_S",
-        "tetromino_O"
-      ]
+      "grid_shape": "big_6644_1",
+      "piece_set": "mixed"
     },
     {
       "level": 31,
-      "grid_shape": "big_5544_1",
-      "allowed_piece_ids": [
-        "dot",
-        "domino",
-        "tromino_I",
-        "tromino_L",
-        "tetromino_I",
-        "tetromino_L",
-        "tetromino_S",
-        "tetromino_O"
-      ]
-    },
-    {
-      "level": 32,
-      "grid_shape": "big_5544_2",
-      "allowed_piece_ids": [
-        "dot",
-        "domino",
-        "tromino_I",
-        "tromino_L",
-        "tetromino_I",
-        "tetromino_L",
-        "tetromino_S",
-        "tetromino_O"
-      ]
-    },
-    {
-      "level": 33,
-      "grid_shape": "big_6543_1",
-      "allowed_piece_ids": [
-        "dot",
-        "domino"
-      ]
-    },
-    {
-      "level": 34,
-      "grid_shape": "big_6543_2",
-      "allowed_piece_ids": [
-        "dot",
-        "domino"
-      ]
-    },
-    {
-      "level": 35,
-      "grid_shape": "big_6554_1",
-      "allowed_piece_ids": [
-        "dot",
-        "domino",
-        "tromino_I",
-        "tromino_L",
-        "tetromino_I",
-        "tetromino_L",
-        "tetromino_S",
-        "tetromino_O"
-      ]
-    },
-    {
-      "level": 36,
-      "grid_shape": "big_6554_2",
-      "allowed_piece_ids": [
-        "dot",
-        "domino",
-        "tromino_I",
-        "tromino_L",
-        "tetromino_I",
-        "tetromino_L",
-        "tetromino_S",
-        "tetromino_O"
-      ]
-    },
-    {
-      "level": 37,
-      "grid_shape": "big_7543_1",
-      "allowed_piece_ids": [
-        "dot",
-        "domino"
-      ]
-    },
-    {
-      "level": 38,
-      "grid_shape": "big_7543_2",
-      "allowed_piece_ids": [
-        "dot",
-        "domino"
-      ]
-    },
-    {
-      "level": 39,
-      "grid_shape": "big_6644_1",
-      "allowed_piece_ids": [
-        "dot",
-        "domino",
-        "tromino_I",
-        "tromino_L",
-        "tetromino_I",
-        "tetromino_L",
-        "tetromino_S",
-        "tetromino_O"
-      ]
-    },
-    {
-      "level": 40,
       "grid_shape": "big_6644_2",
-      "allowed_piece_ids": [
-        "dot",
-        "domino",
-        "tromino_I",
-        "tromino_L",
-        "tetromino_I",
-        "tetromino_L",
-        "tetromino_S",
-        "tetromino_O"
-      ]
+      "piece_set": "mixed"
     }
   ]
 }

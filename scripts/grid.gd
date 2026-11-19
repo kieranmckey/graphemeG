@@ -169,7 +169,8 @@ func check_piece_vs_solution(grapheme: Grapheme, sol: Dictionary) -> bool:
 
 func check_for_valid_words() -> void:
 	for t in tiles:
-		if t.tile_state == Constants.TileState.INVALID:
+		if t.tile_state == Constants.TileState.INVALID or \
+		   t.tile_state == Constants.TileState.VALIDATED:
 			t.set_state(Constants.TileState.FILLED)
 
 	var invalid_cells: Array = []
@@ -196,9 +197,7 @@ func _scan_run(primary: int, secondaries: Array, is_row: bool, invalid_cells: Ar
 	for sec in secondaries:
 		var t: Tile = get_tile(primary if is_row else sec,
 							   sec     if is_row else primary)
-		var occupied: bool = t != null and \
-			(t.tile_state == Constants.TileState.FILLED or
-			 t.tile_state == Constants.TileState.VALIDATED)
+		var occupied: bool = t != null and t.grapheme != null
 		if occupied:
 			run_word += t.grapheme.letters[t.letter_index] if t.grapheme else "?"
 			run_tiles.append(t)
@@ -212,9 +211,10 @@ func _try_validate_run(word: String, run_tiles: Array, invalid_cells: Array) -> 
 		return
 	if Leveller.is_word_valid(word):
 		for t in run_tiles:
-			t.set_state(Constants.TileState.VALIDATED)
+			if t.tile_state != Constants.TileState.INVALID:
+				t.set_state(Constants.TileState.VALIDATED)
 	else:
 		for t in run_tiles:
-			if t.tile_state != Constants.TileState.VALIDATED:
-				t.set_state(Constants.TileState.INVALID)
+			t.set_state(Constants.TileState.INVALID)
+			if not invalid_cells.has(t):
 				invalid_cells.append(t)

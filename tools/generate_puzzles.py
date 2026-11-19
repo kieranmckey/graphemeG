@@ -7,7 +7,7 @@ Usage:
 
 Word validity : data/words7.txt  (same list the game validates against at runtime)
 Difficulty    : SymSpell en-80k frequency list (downloaded once to tools/frequency_dict.txt)
-Output        : data/puzzle_bank.json  (overwrites existing file)
+Output        : data/puzzle_bank.json  (new puzzles are prepended to existing ones)
 """
 
 import argparse
@@ -37,6 +37,7 @@ MAX_SOLVER_CALLS = 10_000  # backtracker budget per puzzle attempt
 MAX_WORD_RANK    = 8_000   # only use words ranked within the top-N most common; filters
                            # proper nouns (joseph) and abbreviations (nth, del) that appear
                            # in corpora but aren't suitable puzzle answers
+MAX_WORD_REPEATS = 1       # maximum occurrences of the same answer in one puzzle
 
 # ---------------------------------------------------------------------------
 # Frequency list
@@ -75,16 +76,24 @@ def load_freq_dict() -> dict:
 # Word index  (words7.txt is the validity source; freq order drives quality)
 # ---------------------------------------------------------------------------
 
-def load_word_index(freq_dict: dict, max_rank: int = MAX_WORD_RANK) -> dict:
+def load_valid_words() -> set:
+    """Returns the normalized words accepted by the game's runtime validator."""
+    with open(WORDS_FILE, encoding="utf-8") as fh:
+        return {
+            word.strip().lower()
+            for word in fh
+            if word.strip() and word.strip().lower().isalpha()
+        }
+
+
+def load_word_index(valid_words: set, freq_dict: dict,
+                    max_rank: int = MAX_WORD_RANK) -> dict:
     """Returns {length: [words sorted common-first]}, limited to words within max_rank."""
     by_len: dict = {}
-    with open(WORDS_FILE, encoding="utf-8") as fh:
-        for line in fh:
-            w = line.strip().lower()
-            if w.isalpha():
-                rank = freq_dict.get(w, 999_999)
-                if rank <= max_rank:
-                    by_len.setdefault(len(w), []).append(w)
+    for w in sorted(valid_words):
+        rank = freq_dict.get(w, 999_999)
+        if rank <= max_rank:
+            by_len.setdefault(len(w), []).append(w)
     for wlist in by_len.values():
         # Sort common words first; unknown/rare words fall to the end
         wlist.sort(key=lambda w: freq_dict.get(w, 999_999))
@@ -149,10 +158,13 @@ def build_crossing_map(all_slots: list) -> dict:
 # ---------------------------------------------------------------------------
 
 class Solver:
-    def __init__(self, all_slots: list, crossings: dict, word_index: dict) -> None:
+    def __init__(self, all_slots: list, crossings: dict, word_index: dict,
+                 valid_words: set, max_word_repeats: int) -> None:
         self.slots      = all_slots
         self.crossings  = crossings
         self.word_index = word_index
+        self.valid_words = valid_words
+        self.max_word_repeats = max_word_repeats
         self.calls      = 0
         self.assignment: dict = {}  # slot_index -> word string
 
@@ -179,7 +191,10 @@ class Solver:
         pool = random.sample(candidates[:pool_size], pool_size)
 
         for word in pool:
-            if all(word[p] == ch for p, ch in constraints.items()):
+            repeat_count = sum(assigned == word for assigned in self.assignment.values())
+            if (word in self.valid_words
+                    and repeat_count < self.max_word_repeats
+                    and all(word[p] == ch for p, ch in constraints.items())):
                 self.calls += 1
                 self.assignment[slot_idx] = word
                 if self.solve(order, depth + 1):
@@ -235,7 +250,8 @@ def make_fill(cells: list, rows: int, cols: int,
 
 def generate_for_shape(shape_name: str, shape_data: dict,
                        word_index: dict, freq_dict: dict,
-                       n_target: int) -> list:
+                       valid_words: set, n_target: int,
+                       max_word_repeats: int) -> list:
     cells = [tuple(c) for c in shape_data["cells"]]
     rows  = shape_data["rows"]
     cols  = shape_data["cols"]
@@ -257,7 +273,9 @@ def generate_for_shape(shape_name: str, shape_data: dict,
 
     while len(puzzles) < n_target and attempts < n_target * 60:
         attempts += 1
-        solver = Solver(all_slots, crossings, word_index)
+        solver = Solver(
+            all_slots, crossings, word_index, valid_words, max_word_repeats
+        )
         if solver.solve(order):
             fill = make_fill(cells, rows, cols, solver.assignment, all_slots)
             key  = json.dumps(fill, separators=(",", ":"))
@@ -298,24 +316,45 @@ def main() -> None:
         "--max-rank", type=int, default=MAX_WORD_RANK,
         help=f"Only use words ranked within top-N by frequency (default: {MAX_WORD_RANK})"
     )
+    parser.add_argument(
+        "--max-repeats", type=int, default=MAX_WORD_REPEATS,
+        help=f"Maximum uses of one word per puzzle (default: {MAX_WORD_REPEATS})"
+    )
     args = parser.parse_args()
+
+    if args.max_repeats < 1:
+        parser.error("--max-repeats must be at least 1")
 
     if args.seed is not None:
         random.seed(args.seed)
 
     ensure_freq_file()
     freq_dict  = load_freq_dict()
-    word_index = load_word_index(freq_dict, args.max_rank)
+    valid_words = load_valid_words()
+    word_index = load_word_index(valid_words, freq_dict, args.max_rank)
 
     with open(SHAPES_FILE) as fh:
         shapes: dict = json.load(fh)
 
+    with open(OUTPUT_FILE, encoding="utf-8") as fh:
+        existing_bank: dict = json.load(fh)
+
     bank: dict = {}
     for shape_name, shape_data in shapes.items():
         print(f"\n-- {shape_name} --")
-        puzzles = generate_for_shape(
-            shape_name, shape_data, word_index, freq_dict, args.count
+        new_puzzles = generate_for_shape(
+            shape_name, shape_data, word_index, freq_dict, valid_words,
+            args.count, args.max_repeats
         )
+        puzzles = []
+        seen_fills: set = set()
+        for puzzle in new_puzzles + existing_bank.get(shape_name, []):
+            fill_key = json.dumps(puzzle["fill"], separators=(",", ":"))
+            if fill_key in seen_fills:
+                continue
+            seen_fills.add(fill_key)
+            puzzle["id"] = len(puzzles) + 1
+            puzzles.append(puzzle)
         bank[shape_name] = puzzles
         tally = {t: sum(1 for p in puzzles if p["difficulty"] == t)
                  for t in ("Easy", "Medium", "Hard", "Expert")}

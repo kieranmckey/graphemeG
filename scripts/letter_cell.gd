@@ -20,6 +20,16 @@ func setup(ch: String, tile_tex: Texture2D, font: Font, font_size: int) -> void:
 	_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	add_child(_label)
 
+func show_border(color: Color) -> void:
+	var hw := Constants.WORLD_TILE_SIZE * 0.5 - 2.0
+	var line := Line2D.new()
+	line.points = PackedVector2Array([Vector2(-hw, -hw), Vector2(hw, -hw),
+		Vector2(hw, hw), Vector2(-hw, hw)])
+	line.closed = true
+	line.width = 4.0
+	line.default_color = color
+	add_child(line)
+
 func _ready() -> void:
 	# Size and position the label after entering the tree; add offset to nudge baseline down.
 	if _label:

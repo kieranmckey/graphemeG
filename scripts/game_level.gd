@@ -31,7 +31,7 @@ func _ready() -> void:
 
 func _start_level() -> void:
 	var cfg: Dictionary      = Leveller.get_level_config()
-	var shape_name: String = cfg.get("grid_shape", "digit_1")
+	var shape_name: String = cfg.get("grid_shape", "")
 	var shape_data: Dictionary = Leveller.load_grid_shape(shape_name)
 	var puzzle: Dictionary     = Leveller.get_puzzle(shape_name)
 
@@ -44,6 +44,8 @@ func _start_level() -> void:
 		Constants.BORDER_SIZE + Constants.WORLD_TILE_SIZE * 0.5)
 
 	_grid.build(shape_data, origin)
+	_hud.set_info("Level %d: %s\n%s" % [
+		Leveller.level + 1, shape_name, puzzle.get("difficulty", "Any")])
 
 	_hud.next_level_pressed.connect(_go_to_next_level)
 	_hud.redo_level_pressed.connect(_redo_level)
@@ -67,7 +69,7 @@ func _start_level() -> void:
 		var sol: Dictionary = _model_solution[i]
 		var piece: Grapheme = piece_scene.instantiate()
 		var rand_rot: int = rng.randi_range(0, (sol["shape"] as PieceShape).rotation_count() - 1)
-		piece.setup(sol["shape"], rand_rot, sol["letters"])
+		piece.setup(sol["shape"], rand_rot, sol["letters"], sol["rotation"])
 		add_child(piece)
 		_piece_to_solution[piece] = sol
 		pieces.append(piece)
@@ -137,8 +139,6 @@ func _handle_drag(pos: Vector2, delta: Vector2) -> void:
 
 func _tap_piece(g: Grapheme) -> void:
 	var was_placed: bool = g.is_placed
-	var old_row: int     = g.start_tile_row
-	var old_col: int     = g.start_tile_col
 
 	if was_placed:
 		_grid.remove_from_grid(g)
@@ -146,20 +146,14 @@ func _tap_piece(g: Grapheme) -> void:
 	g.tap_rotate()
 
 	if was_placed:
-		var first: Vector2i = g.cells[0]
-		g.drag_anchor = first  # tap-rotate snaps via cells[0], consistent with stored origin
-		var anchor: Tile = _grid.get_tile(old_row + first.x, old_col + first.y)
-		if anchor:
-			g.global_position = anchor.global_position \
-				- Vector2(first.y * Constants.WORLD_TILE_SIZE, first.x * Constants.WORLD_TILE_SIZE)
-			g.start_tile_row = old_row
-			g.start_tile_col = old_col
-			if _grid.snap_to_tile(g):
-				_check_piece_vs_solution(g)
-				if _grid.all_pieces_placed():
-					_grid.check_for_valid_words()
-				return
+		if _grid.snap_to_tile(g):
+			_check_piece_vs_solution(g)
+			if _grid.all_pieces_placed():
+				_grid.check_for_valid_words()
+			return
 		_return_to_tray(g)
+	else:
+		_piece_tray.reposition_piece(g)
 
 # -- Drag ------------------------------------------------------------------
 
@@ -250,17 +244,25 @@ func _check_piece_vs_solution(g: Grapheme) -> void:
 										 g.start_tile_col + (off as Vector2i).y)
 			if t:
 				t.set_state(Constants.TileState.VALIDATED)
+		g.lock()
 
 # -- Grid signal -----------------------------------------------------------
 
 func _on_words_validated(all_valid: bool, _invalid_cells: Array) -> void:
 	_level_over = all_valid
-	_hud.show_level_end(all_valid)
+	if all_valid:
+		Leveller.complete_level(Leveller.level)
+		for g in _piece_to_solution:
+			g.lock()
+	_hud.show_level_end(all_valid, Leveller.level == Leveller.get_level_count() - 1)
 
 # -- Navigation ------------------------------------------------------------
 
 func _go_to_next_level() -> void:
-	Leveller.level = (Leveller.level + 1) % Constants.MAX_LEVELS
+	if Leveller.level >= Leveller.get_level_count() - 1:
+		_quit_to_menu()
+		return
+	Leveller.level += 1
 	get_tree().reload_current_scene()
 
 func _redo_level() -> void:

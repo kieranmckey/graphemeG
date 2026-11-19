@@ -7,9 +7,9 @@ extends Node2D
 var _pieces: Array = []
 var _placed: Array = []
 var _piece_slots: Dictionary = {}   # Grapheme → local Vector2 in container
+var _piece_slot_sizes: Dictionary = {} # Grapheme → reserved size for any rotation
 
 var _viewport_width: float = 1080.0
-var _total_width: float = 0.0
 var _scroll_offset: float = 0.0
 
 const PIECE_PADDING: float = 30.0
@@ -24,27 +24,64 @@ func initialize(pos: Vector2, viewport_width: float) -> void:
 
 func load_pieces(pieces: Array) -> void:
 	_pieces = pieces.duplicate()
+	_piece_slots.clear()
+	_piece_slot_sizes.clear()
 	var x := PIECE_PADDING
-	var y := 0.0
 	var row_h := 0.0
+	var current_row: Array = []
+	var rows: Array = []
 
 	for piece in pieces:
-		var rect: Rect2 = piece.get_bounding_rect()
+		var slot_size := _get_rotation_envelope(piece)
 		# Wrap to next row when piece doesn't fit remaining width
-		if x > PIECE_PADDING and x + rect.size.x + PIECE_PADDING > _viewport_width:
-			y += row_h + PIECE_PADDING
+		if not current_row.is_empty() and x + slot_size.x + PIECE_PADDING > _viewport_width:
+			rows.append({"pieces": current_row, "height": row_h})
+			current_row = []
 			x = PIECE_PADDING
 			row_h = 0.0
-		var slot := Vector2(x - rect.position.x, y - rect.position.y)
-		_piece_slots[piece] = slot
-		x += rect.size.x + PIECE_PADDING
-		row_h = max(row_h, rect.size.y)
+		current_row.append({"piece": piece, "position": Vector2(x, 0.0), "size": slot_size})
+		x += slot_size.x + PIECE_PADDING
+		row_h = max(row_h, slot_size.y)
+
+	if not current_row.is_empty():
+		rows.append({"pieces": current_row, "height": row_h})
+
+	var y := 0.0
+	for row in rows:
+		for slot in row["pieces"]:
+			var piece: Grapheme = slot["piece"]
+			var slot_position: Vector2 = slot["position"]
+			var slot_size: Vector2 = slot["size"]
+			_piece_slots[piece] = Vector2(slot_position.x, y)
+			_piece_slot_sizes[piece] = Vector2(slot_size.x, row["height"])
+		y += row["height"] + PIECE_PADDING
+
+	for piece in pieces:
 		if piece.get_parent():
 			piece.get_parent().remove_child(piece)
 		_container.add_child(piece)
-		piece.position = slot
+		_position_piece_in_slot(piece)
 
-	_total_width = x
+func _get_rotation_envelope(piece: Grapheme) -> Vector2:
+	var max_width := 1
+	var max_height := 1
+	for rotation in piece.piece_shape.rotation_count():
+		var cells: Array = piece.piece_shape.get_cells(rotation)
+		var max_row := 0
+		var max_col := 0
+		for cell in cells:
+			var offset := cell as Vector2i
+			max_row = maxi(max_row, offset.x)
+			max_col = maxi(max_col, offset.y)
+		max_height = maxi(max_height, max_row + 1)
+		max_width = maxi(max_width, max_col + 1)
+	return Vector2(max_width, max_height) * Constants.WORLD_TILE_SIZE
+
+func _position_piece_in_slot(piece: Grapheme) -> void:
+	var rect := piece.get_bounding_rect()
+	var slot_position: Vector2 = _piece_slots.get(piece, Vector2.ZERO)
+	var slot_size: Vector2 = _piece_slot_sizes.get(piece, Vector2.ZERO)
+	piece.position = slot_position + slot_size * 0.5 - rect.get_center()
 
 # ── Public API ────────────────────────────────────────────────────────────────
 
@@ -61,7 +98,11 @@ func return_piece(g: Grapheme) -> void:
 		if g.get_parent():
 			g.get_parent().remove_child(g)
 		_container.add_child(g)
-	g.position = _piece_slots.get(g, Vector2.ZERO)
+	_position_piece_in_slot(g)
+
+func reposition_piece(g: Grapheme) -> void:
+	if g.get_parent() == _container:
+		_position_piece_in_slot(g)
 
 func mark_placed(g: Grapheme) -> void:
 	if not _placed.has(g):

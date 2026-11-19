@@ -4,8 +4,7 @@ class_name Constants
 
 # --- Layout ---
 const START_LEVEL: int = 0
-const MAX_LEVELS: int = 10
-const BORDER_SIZE: float = 25.0
+const BORDER_SIZE: float = 125.0
 const WORLD_TILE_SIZE: float = 120.0
 const LETTER_SCALE: float = WORLD_TILE_SIZE / 64.0
 const DISABLED_ALPHA: float = 0.15
@@ -21,7 +20,7 @@ const UI_BUTTON_PATH: String = "res://assets/ui/button_rectangle_flat.png"
 const GRAPHEME_TILES_DIR: String = "res://assets/grapheme_tiles/"
 const GRID_TILES_DIR: String = "res://assets/grid_tiles/"
 const GRAPHEME_TILE_FONT_SIZE: int = 96
-const LETTER_Y_OFFSET: float = -8.0   # fine-tune vertical glyph centering
+const LETTER_Y_OFFSET: float = 0.0    # fine-tune vertical glyph centering
 const UI_FONT_SIZE: int = 48
 const WORDS_LIST_PATH: String = "res://data/words7.txt"
 const LEVEL_DATA_PATH: String = "res://data/level_data.json"

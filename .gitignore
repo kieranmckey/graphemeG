@@ -3,6 +3,7 @@
 # Godot-specific ignores
 .godot/
 *.tmp
+/build/
 
 # Imported translations (automatically generated from CSV files)
 *.translation
